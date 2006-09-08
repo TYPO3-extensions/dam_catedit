@@ -1,3 +1,8 @@
+06-08-31 Rene Fritz  <r.fritz@colorcube.de>
+
+	* Fix: Workaround added: delete function in navframe jumped to another submodule when that was called before the current submodule
+	* Fix: Delete function in list module works now
+
 06-05-29 Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: use of $GLOBALS['TYPO3_DB']->xxx
