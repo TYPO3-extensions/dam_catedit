@@ -1,22 +1,22 @@
 <?php
 /***************************************************************
 *  Copyright notice
-*  
-*  (c) 2003 René Fritz (r.fritz@colorcube.de)
+*
+*  (c) 2003-2006 Rene Fritz (r.fritz@colorcube.de)
 *  All rights reserved
 *
-*  This script is part of the Typo3 project. The Typo3 project is 
+*  This script is part of the Typo3 project. The Typo3 project is
 *  free software; you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
 *  the Free Software Foundation; either version 2 of the License, or
 *  (at your option) any later version.
-* 
+*
 *  The GNU General Public License can be found at
 *  http://www.gnu.org/copyleft/gpl.html.
-*  A copy is found in the textfile GPL.txt and important notices to the license 
+*  A copy is found in the textfile GPL.txt and important notices to the license
 *  from the author is found in LICENSE.txt distributed with these scripts.
 *
-* 
+*
 *  This script is distributed in the hope that it will be useful,
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,7 +28,7 @@
  * database functions for a table that is organized like a tree with parent_id (pid)
  *
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  */
 
 class tx_damcatedit_db {
@@ -42,22 +42,22 @@ class tx_damcatedit_db {
 	 * Defines the field of $table which is the parent id field (like pid for table pages).
 	 */
 	var $parentField;
-	
+
 	/**
 	 * Default set of fields selected from the tree table.
 	 * @see setFields()
 	 */
 	var $fieldList = 'uid';
-	
+
 	/**
 	 * List of other fields which are ALLOWED to set
 	 * @see setFields()
 	 */
 	var $defaultList = 'uid,pid,tstamp,sorting,deleted,perms_userid,perms_groupid,perms_user,perms_group,perms_everybody,crdate,cruser_id';
-	
+
 	var $sorting='';
-	
-	
+
+
 	var $mm_table='';
 	var $mm_sorting='';
 	var $mm_prependTableName=FALSE;
@@ -77,14 +77,14 @@ class tx_damcatedit_db {
 	/**
 	 * Initialize the object.
 	 * The class will be setup for BE use. See setEnableFields().
-	 * 
+	 *
 	 * @param	string		Table name
 	 * @param	string		Parent-id field name. If empty $TCA[$this->table]['ctrl']['treeParentField'] will be used.
-	 * @return	void		
+	 * @return	void
 	 */
 	function init($table, $parentField='')	{
 		global $TCA, $TSFE;
-		
+
 		$this->table = $table;
 		t3lib_div::loadTCA($table);
 		$this->parentField = $parentField ? $parentField : $TCA[$this->table]['ctrl']['treeParentField'];
@@ -99,19 +99,19 @@ class tx_damcatedit_db {
 		$this->where_default = $this->enableFields('delete');
 	}
 
-#TODO
+// TODO
 	function initMM($table, $prependTableName=FALSE, $sortFields='sorting')	{
 		$this->mm_table = $table;
 		$this->mm_prependTableName = $prependTableName;
 		$this->mm_sorting = ' ORDER BY '.$sortFields;
 	}
-	
-	
+
+
 	/**
 	 * Sets the internal pid-list.
-	 * 
+	 *
 	 * @param	string		Commalist of ids
-	 * @return	void		
+	 * @return	void
 	 */
 	function setPidList ($pidList)  {
 		$this->pidList = $pidList;
@@ -122,17 +122,17 @@ class tx_damcatedit_db {
 	/**
 	 * Sets the internal fieldList.
 	 * The field list will be used for SELECT.
-	 * 
+	 *
 	 * @param	string		Commalist of fields
 	 * @param	boolean		If set, the fieldnames will be set no matter what. Otherwise the field name must be found as key in $TCA['pages']['columns']
-	 * @return	void		
+	 * @return	void
 	 */
 	function setFields($fields='',$noCheck=0)	{
 		global $TCA;
-	
+
 		$fields = $fields ? $fields : 'uid,pid,'.$TCA[$this->table]['ctrl']['label'];
 		$fieldArr = explode(',',$fields);
-		
+
 		$setFields=array();
 		foreach($fieldArr as $field) {
 			if ($noCheck || is_array($TCA[$this->table]['columns'][$field]) || t3lib_div::inList($this->defaultList,$field))	{
@@ -146,11 +146,13 @@ class tx_damcatedit_db {
 	/**
 	 * Sets the internal sorting fields.
 	 * The field list will be used for SELECT.
-	 * 
+	 *
 	 * @param	string		Commalist of fields
-	 * @return	void		
+	 * @return	void
 	 */
 	function setSortFields($sortFields='')	{
+		global $TCA;
+
 		if($sortFields) {
 			$this->sorting = ' ORDER BY '.$sortFields;
 		} else {
@@ -163,10 +165,10 @@ class tx_damcatedit_db {
 	/**
 	 * Sets the internal where clause for enable-fields..
 	 * The field list will be used as enable-fields.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param	string		Commalist of fields. "FE" set the proper frontend fields, "BE" for backend.
-	 * @return	void		
+	 * @return	void
 	 * @see enableFields()
 	 */
 	function setEnableFields ($fields)  {
@@ -189,9 +191,9 @@ class tx_damcatedit_db {
 
 	/**
 	 * Sets a flag which let all record functions return the query result not the records.
-	 * 
+	 *
 	 * @param	boolean		Commalist of ids
-	 * @return	void		
+	 * @return	void
 	 */
 	function setResReturn ($resReturn=false)  {
 		$this->resReturn = $resReturn;
@@ -204,7 +206,7 @@ class tx_damcatedit_db {
 	 * Gets records with uid IN $uids
 	 * You can set $field to a list of fields (default is '*')
 	 * Additional WHERE clauses can be added by $where (fx. ' AND blabla=1')
-	 * 
+	 *
 	 * @param	integer		UIDs of records
 	 * @param	string		Commalist of fields to select
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
@@ -213,7 +215,7 @@ class tx_damcatedit_db {
 	 */
 	function getRecords ($uids, $fields='', $where='', $sorting=true)	{
 		$fields = $fields?$fields:$this->fieldList;
-		
+
 		$rows = array();
 		$res = mysql(TYPO3_db, 'SELECT '.$fields.' FROM '.$this->table.' WHERE uid IN ('.$uids.')'.$where.$this->where_default.$this->pidListWhere.($sorting?$this->sorting:''));
 		echo mysql_error();
@@ -222,19 +224,19 @@ class tx_damcatedit_db {
 		}
 		return $rows;
 	}
-	
-	
+
+
 
 	/*******************************************
 	 *
 	 * root-record functions (using SQL queries)
 	 *
 	 *******************************************/
-	 
-	 
+
+
 	/**
 	 * Returns an array with rows of root-records with parent_id=0
-	 * 
+	 *
 	 * @param	string		List of fields to select
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
 	 * @param 	boolean 	Enable sorting
@@ -242,14 +244,14 @@ class tx_damcatedit_db {
 	 */
 	 function getRootRecords ($fields='',$where='',$sorting=true)	{
 		$fields = $fields?$fields:$this->fieldList;
-		
+
 		return $this->getSubRecords ('0',$fields,$where,$sorting);
 	}
 
 
 	/**
 	 * Returns a commalist of record ids of root records (parent_id=0)
-	 * 
+	 *
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
 	 * @return	string		Comma-list of record ids of root records
 	 */
@@ -266,11 +268,11 @@ class tx_damcatedit_db {
 	 * sub-record functions (using SQL queries)
 	 *
 	 *******************************************/
-	 
-	 
+
+
 	/**
 	 * Returns an array with rows for subrecords with parent_id=$uid
-	 * 
+	 *
 	 * @param	integer		UIDs of records
 	 * @param	string		List of fields to select (default is '*')
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
@@ -279,12 +281,12 @@ class tx_damcatedit_db {
 	 */
 	function getSubRecords ($uid, $fields='', $where='', $sorting=true)	{
 		$fields = $fields?$fields:$this->fieldList;
-		
+
 		$res = mysql(TYPO3_db, 'SELECT '.$fields.' FROM '.$this->table.' WHERE '.$this->parentField.'='.intval($uid).$where.$this->where_default.$this->pidListWhere.($sorting?$this->sorting:''));
 		echo mysql_error();
-		
+
 		if($this->resReturn) return $res;
-		
+
 		$rows = array();
 		while ($row = mysql_fetch_assoc($res))	{
 			$rows[$row['uid']]=$row;
@@ -296,7 +298,7 @@ class tx_damcatedit_db {
 	/**
 	 * Count subrecords with parent_id=$uid
 	 * Additional WHERE clauses can be added by $where (fx. ' AND blabla=1')
-	 * 
+	 *
 	 * @param	integer		UIDs of records
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
 	 * @return	integer		Count of subrecords
@@ -316,11 +318,11 @@ class tx_damcatedit_db {
 	 * tree functions (using $this->tree)
 	 *
 	 *******************************************/
-	 
+
 
 	/**
 	 * Build the tree.
-	 * 
+	 *
 	 * @param	integer		UID of the start record records. Use 0 if you want to get from root.
 	 * @param	integer		Walk $depth levels deep into the tree.
 	 * @param	integer		determines at which level in the tree to start collecting uid's. Zero means 'start right away', 1 = 'next level and out'
@@ -331,18 +333,18 @@ class tx_damcatedit_db {
 	function buildTree($uid, $depth, $beginLevel=0, $fields='', $where='')	{
 
 		$fields = $fields?$fields:$this->fieldList;
-		
+
 		$depth=intval($depth);
 		$beginLevel=intval($beginLevel);
 		$uid=intval($uid);
-		
+
 		$this->tree=array();
 		$pointer=&$this->tree;
 		$this->treeLookup=array();
 
-		$this->_walkTree($uid, $depth-1, $begin-1, $fields, $where, $pointer);
+		$this->_walkTree($uid, $depth-1, $beginLevel-1, $fields, $where, $pointer);
 	}
-	
+
 	function _walkTree($uid, $depth, $beginLevel, $fields, $where, &$pointer)	{
 
 		if ($depth>0)	{
@@ -354,16 +356,16 @@ class tx_damcatedit_db {
 					$this->treeLookup[$uid]['--subLevel--']=&$pointer[$uid]['--subLevel--'];
 				}
 				if ($depth>1)	{
-					$this->_walkTree($rowUid, $depth-1, $begin-1, $fields, $where, $pointer[$uid]['--subLevel--']);
+					$this->_walkTree($rowUid, $depth-1, $beginLevel-1, $fields, $where, $pointer[$uid]['--subLevel--']);
 				}
 			}
 		}
-	}	
-	
-	
+	}
+
+
 
 ### TODO
-	
+
 	/**
 	 * Returns a commalist of record ids for a query (eg. 'WHERE parent_id IN (...)')
 	 * $uid_list is a comma list of record ids
@@ -415,20 +417,20 @@ class tx_damcatedit_db {
 					$theList.=$row['uid'].',';
 				}
 				if ($depth>1)	{
-					$theList.=$this->getTreeList($row['uid'], $depth-1, $begin-1, $where);
+					$theList.=$this->getTreeList($row['uid'], $depth-1, $beginLevel-1, $where);
 				}
 			}
 		}
-//		debug($theList);
+
 		return $theList;
 	}
 
 
 
 	function getRootLine ($uid,$selFields='',$where=' ',$MP='')	{
-#debug('getRootLine');
+
 		if ($selFields=='') {
-#todo
+// TODO
 			$selFields = t3lib_div::uniqueList('pid,uid,title,nav_title,hidden,fe_group,'.$this->parentField);
 		}
 		$MPA=array();
@@ -439,7 +441,7 @@ class tx_damcatedit_db {
 				$MPA[$MPAk]=explode('-',$MPA[$MPAk]);
 			}
 		}
-		
+
 		$loopCheck = 20;
 		$theRowArray = Array();
 		$output=Array();
@@ -447,15 +449,13 @@ class tx_damcatedit_db {
 		while ($uid!=0 && $loopCheck>0)	{
 			$loopCheck--;
 			$res = mysql(TYPO3_db, 'SELECT '.$selFields.' FROM '.$this->table.' WHERE uid='.intval($uid).$where.$this->where_default);
-			if (mysql_error())	debug(array(mysql_error(),$query));
 			if ($row = mysql_fetch_assoc($res))	{
 				if (count($MPA))	{
 					$curMP=end($MPA);
 					if (!strcmp($row['uid'],$curMP[0]))	{
-#debug($MPA);
+
 						array_pop($MPA);
 						$res = mysql(TYPO3_db, 'SELECT '.$selFields.' FROM '.$this->table.' WHERE uid='.intval($curMP[1]).$where.$this->where_default);
-						if (mysql_error())	debug(array(mysql_error(),$query));
 						$row = mysql_fetch_assoc($res);
 						$row['_MOUNTED_FROM']=$curMP[0];
 						if (!is_array($row))	return array();	// error - no record...
@@ -468,7 +468,7 @@ class tx_damcatedit_db {
 				break;
 			}
 		}
-#debug($MPA);
+
 
 		if (is_array($theRowArray) && !count($MPA))	{
 			reset($theRowArray);
@@ -480,8 +480,6 @@ class tx_damcatedit_db {
 		}
 		ksort($output);
 
-#debug($output);
-#echo'<HR>';
 		return $output;
 	}
 
@@ -513,7 +511,7 @@ class tx_damcatedit_db {
 		$uid = intval($uid);
 		$query='DELETE FROM '.$this->mm_table.' WHERE uid_local='.$dataRecordUid.' AND foreign_uid='.$treeRecordUid;
 		$query.=$this->mm_prependTableName?' AND tablenames=\''.$this->table.'\'':'';
-//debug($query,'delete relation');
+
 		$res=mysql(TYPO3_db,$query);
 
 		if ($this->mm_prependTableName)	{
@@ -522,7 +520,7 @@ class tx_damcatedit_db {
 		}
 		$sort=0; // what to set here???
 		$query='INSERT INTO '.$this->mm_table.' (uid_local,uid_foreign,sorting'.$prependTable.') VALUES (\''.$dataRecordUid.'\',\''.$treeRecordUid.'\','.$sort.$prependTableName.')';
-//debug($query,'insert relation');
+
 		$res=mysql(TYPO3_db,$query);
 
 // !!!!!! update the relation counter in the data table
@@ -537,13 +535,13 @@ class tx_damcatedit_db {
 	 * misc functions
 	 *
 	 *******************************************/
-	 
+
 	/**
-	 * Returns a part of a WHERE clause which will filter out records with start/end times or hidden/fe_groups fields set to values that should de-select them according to the current time, preview settings or user login. 
+	 * Returns a part of a WHERE clause which will filter out records with start/end times or hidden/fe_groups fields set to values that should de-select them according to the current time, preview settings or user login.
 	 * Is using the $TCA arrays "ctrl" part where the key "enablefields" determines for each table which of these features applies to that table.
-	 * 
+	 *
 	 * @param	array		Commalist you can pass where itmes can be "disabled", "starttime", "endtime", "fe_group" (keys from "enablefields" in TCA) and if set they will make sure that part of the clause is not added. Thus disables the specific part of the clause. For previewing etc.
-	 * @param	string		Table name found in the $TCA array (default $this->table)
+	 * @param	string		Table name found in the $TCA array(default $this->table)
 	 * @see tslib_cObj::enableFields(), deleteClause()
 	 */
 	function enableFields($useFields='delete,disabled,starttime,endtime,fe_group',$table='')	{
@@ -581,15 +579,15 @@ class tx_damcatedit_db {
 
 		return $query;
 	}
-	
-	
-	
-	
+
+
+
+
 //---------------------------------------------------------------------------------------------------
 
 	/**
 	 * Returns an array with rows for subrecords with parent_id=$uid
-	 * 
+	 *
 	 * @param	integer		UID of record
 	 * @param	string		List of fields to select (default is '*')
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
@@ -599,10 +597,10 @@ class tx_damcatedit_db {
 	 */
 	function _getSubRecords ($uidList,$level=1,$fields='*',$table='tx_dam_cat',$where='')	{
 		$rows = array();
-		
+
 		while ($level && $uidList)	{
 			$level--;
-			
+
 			$newIdList = array();
 			t3lib_div::loadTCA($table);
 			$ctrl = $GLOBALS['TCA'][$table]['ctrl'];
@@ -614,15 +612,15 @@ class tx_damcatedit_db {
 			$uidList = implode(',', $newIdList);
 
 		}
-		
-		
+
+
 		return $rows;
 	}
 
 
 	/**
 	 * Returns a commalist of sub record ids
-	 * 
+	 *
 	 * @param	integer		UIDs of record
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
 	 * @param	[type]		$table: ...
@@ -632,8 +630,8 @@ class tx_damcatedit_db {
 	function _getSubRecordsIdList($uidList,$level=1,$table='tx_dam_cat',$where='')	{
 		$rows = tx_dam_db::getSubRecords ($uidList,$level,'uid',$table,$where);
 		return implode(',',array_keys($rows));
-	}	
-	
+	}
+
 
 
 	/**
@@ -667,32 +665,22 @@ class tx_damcatedit_db {
 	}
 
 
-	
+
 	function get_mm_fileList($local_table, $local_uid, $select='', $whereClause='', $groupBy='', $orderBy='', $limit=100, $MM_table='tx_dam_mm_ref') {
-		
+
 		$select = $select ? $select : 'tx_dam.uid, tx_dam.title, tx_dam.file_path, tx_dam.file_name, tx_dam.file_type' ;
-//debug(tx_dam_db::SELECT_mm_query(
-//			$select,
-//			$local_table,
-//			'tx_dam_mm_ref',
-//			'tx_dam',
-//			'AND '.$local_table.'.uid IN ('.$local_uid.') '.$whereClause, 
-//			$groupBy, 
-//			$orderBy,
-//			$limit
-//		));
 
 		if(!$orderBy) {
 			$orderBy = $MM_table.'.sorting';
 		}
-					
+
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
 			$select,
 			$local_table,
 			$MM_table,
 			'tx_dam',
 			'AND '.$local_table.'.uid IN ('.$local_uid.') '.$whereClause,
-			$groupBy, 
+			$groupBy,
 			$orderBy,
 			$limit
 		);
@@ -702,13 +690,13 @@ class tx_damcatedit_db {
 			$files[$row['uid']] = $row['file_path'].$row['file_name'];
 			$rows[$row['uid']] = $row;
 		}
-		
-		return array('files'=>$files, 'rows'=>$rows);
+
+		return array('files' => $files, 'rows' => $rows);
 	}
-	
+
 	/**
 	 * Make a list of references to foreign tables (eg. tt_content) by a mm-relation to the tx_dam table
-	 * 
+	 *
 	 * @param	[type]		$tx_dam_uid: ...
 	 * @param	[type]		$select: ...
 	 * @param	[type]		$whereClause: ...
@@ -722,12 +710,12 @@ class tx_damcatedit_db {
 		if(!$orderBy) {
 			$orderBy = $MM_table.'.tablenames';
 		}
-				
-		$res = tx_dam_db::exec_SELECT_mm_refList(
+
+		$res = tx_damcatedit_db::exec_SELECT_mm_refList(
 			$tx_dam_uid,
 			$select,
-			$whereClause, 
-			$groupBy, 
+			$whereClause,
+			$groupBy,
 			$orderBy,
 			$limit,
 			$MM_table
@@ -737,19 +725,22 @@ class tx_damcatedit_db {
 		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
 			$rows[$row['uid']] = $row;
 		}
-		
+
 		return $rows;
 	}
-	
+
+
+
 	/**
 	 * Make a list of references to foreign tables (eg. tt_content) by a mm-relation to the tx_dam table
-	 * 
+	 *
 	 * @param	[type]		$tx_dam_uid: ...
-	 * @param	[type]		$select: ...
-	 * @param	[type]		$whereClause: ...
-	 * @param	[type]		$groupBy: ...
-	 * @param	[type]		$orderBy: ...
-	 * @param	[type]		$limit: ...
+	 * @param	string		$select: ...
+	 * @param	string		$whereClause: ...
+	 * @param	string		$groupBy: ...
+	 * @param	string		$orderBy: ...
+	 * @param	string		$limit: ...
+	 * @param	string		$MM_table: ...
 	 * @return	[type]		...
 	 */
 	function exec_SELECT_mm_refList($tx_dam_uid, $select='', $whereClause='', $groupBy='', $orderBy='', $limit=100, $MM_table='tx_dam_mm_ref') {
@@ -757,26 +748,25 @@ class tx_damcatedit_db {
 		if(!$orderBy) {
 			$orderBy = $MM_table.'.tablenames';
 		}
-									
-		$select = $select ? $select : 'tx_dam.uid, tx_dam.title, tx_dam.file_path, tx_dam.file_name, tx_dam.file_type, '.$MM_table.'.tablenames' ;
-		$whereClause = ((string)$tx_dam_uid) ? (' AND tx_dam.uid IN ('.$tx_dam_uid.') '.$whereClause) : $whereClause;
 
-		
-		
+		$select = $select ? $select : 'tx_dam.uid, tx_dam.title, tx_dam.file_path, tx_dam.file_name, tx_dam.file_type, '.$MM_table.'.tablenames, '.$MM_table.'.ident' ;
+		$whereClause.= $tx_dam_uid ? ' AND tx_dam.uid IN ('.$tx_dam_uid.')' : '';
+
+
+
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
 			$select,
-			'',
-			$MM_table,
 			'tx_dam',
-			$whereClause, 
-			$groupBy, 
+			$MM_table,
+			'',
+			$whereClause,
+			$groupBy,
 			$orderBy,
 			$limit
 		);
-		
+
 		return $res;
 	}
-		
 }
 
 

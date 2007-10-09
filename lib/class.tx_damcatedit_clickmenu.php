@@ -40,64 +40,66 @@
  * XHTML compliant
  *
  * @author	Kasper Skaarhoj <kasper@typo3.com>
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  */
 /**
  * [CLASS/FUNCTION INDEX of SCRIPT]
  *
  *
  *
- *  125: class clickMenu
- *  157:     function init($item)
- *  200:     function doDisplayTopFrameCM()
+ *  120: class tx_damcatedit_clickMenu
+ *  161:     function init($item)
+ *  213:     function doDisplayTopFrameCM()
  *
  *              SECTION: DATABASE
- *  228:     function printDBClickMenu($table,$uid)
- *  315:     function printNewDBLevel($table,$uid)
- *  352:     function externalProcessingOfDBMenuItems($menuItems)
- *  364:     function processingByExtClassArray($menuItems,$table,$uid)
- *  383:     function urlRefForCM($url,$retUrl='',$hideCM=1)
- *  400:     function DB_copycut($table,$uid,$type)
- *  429:     function DB_paste($table,$uid,$type,$elInfo)
- *  450:     function DB_info($table,$uid)
- *  466:     function DB_history($table,$uid)
- *  485:     function DB_perms($table,$uid,$rec)
- *  504:     function DB_db_list($table,$uid,$rec)
- *  523:     function DB_moveWizard($table,$uid,$rec)
- *  544:     function DB_newWizard($table,$uid,$rec)
- *  567:     function DB_editAccess($table,$uid)
- *  585:     function DB_editPageHeader($uid)
- *  603:     function DB_edit($table,$uid)
- *  645:     function DB_new($table,$uid)
- *  670:     function DB_hideUnhide($table,$rec,$hideField)
- *  694:     function DB_delete($table,$uid,$elInfo)
- *  715:     function DB_view($id,$anchor='')
+ *  241:     function printDBClickMenu($table,$uid)
+ *  330:     function printNewDBLevel($table,$uid)
+ *  367:     function externalProcessingOfDBMenuItems($menuItems)
+ *  379:     function processingByExtClassArray($menuItems,$table,$uid)
+ *  398:     function urlRefForCM($url,$retUrl='',$hideCM=1)
+ *  415:     function DB_copycut($table,$uid,$type)
+ *  444:     function DB_paste($table,$uid,$type,$elInfo)
+ *  465:     function DB_info($table,$uid)
+ *  481:     function DB_history($table,$uid)
+ *  500:     function DB_perms($table,$uid,$rec)
+ *  519:     function DB_db_list($table,$uid,$rec)
+ *  539:     function DB_moveWizard($table,$uid,$rec)
+ *  560:     function DB_newWizard($table,$uid,$rec)
+ *  580:     function DB_editAccess($table,$uid)
+ *  598:     function DB_editPageHeader($uid)
+ *  616:     function DB_editRecord($table,$uid)
+ *  636:     function DB_new($table,$uid,$pid)
+ *  667:     function DB_delete($table,$uid,$elInfo)
+ *  688:     function DB_view($id,$anchor='')
+ *  703:     function DB_tempMountPoint($page_id)
+ *  721:     function DB_hideUnhide($table,$rec,$hideField)
+ *  736:     function DB_changeFlag($table, $rec, $flagField, $title, $name, $iconRelPath='gfx/')
  *
  *              SECTION: FILE
- *  744:     function printFileClickMenu($path)
- *  808:     function externalProcessingOfFileMenuItems($menuItems)
- *  822:     function FILE_launch($path,$script,$type,$image)
- *  841:     function FILE_copycut($path,$type)
- *  867:     function FILE_delete($path)
- *  889:     function FILE_paste($path,$target,$elInfo)
+ *  770:     function printFileClickMenu($path)
+ *  834:     function externalProcessingOfFileMenuItems($menuItems)
+ *  848:     function FILE_launch($path,$script,$type,$image)
+ *  868:     function FILE_copycut($path,$type)
+ *  894:     function FILE_delete($path)
+ *  916:     function FILE_paste($path,$target,$elInfo)
  *
  *              SECTION: COMMON
- *  929:     function printItems($menuItems,$item)
- *  981:     function printLayerJScode($menuItems)
- * 1019:     function wrapColorTableCM($str)
- * 1042:     function menuItemsForTopFrame($menuItems)
- * 1059:     function menuItemsForClickMenu($menuItems)
- * 1094:     function linkItem($str,$icon,$onClick,$onlyCM=0,$dontHide=0)
- * 1118:     function excludeIcon($iconCode)
- * 1128:     function enableDisableItems($menuItems)
- * 1166:     function cleanUpSpacers($menuItems)
- * 1208:     function label($label)
- * 1217:     function isCMlayers()
- * 1227:     function frameLocation($str)
- *
+ *  956:     function printItems($menuItems,$item)
+ * 1008:     function printLayerJScode($menuItems)
+ * 1046:     function wrapColorTableCM($str)
+ * 1069:     function menuItemsForTopFrame($menuItems)
+ * 1086:     function menuItemsForClickMenu($menuItems)
+ * 1120:     function addMenuItems($menuItems,$newMenuItems,$position='')
+ * 1196:     function linkItem($str,$icon,$onClick,$onlyCM=0,$dontHide=0)
+ * 1222:     function excludeIcon($iconCode)
+ * 1232:     function enableDisableItems($menuItems)
+ * 1270:     function cleanUpSpacers($menuItems)
+ * 1312:     function label($label)
+ * 1321:     function isCMlayers()
+ * 1331:     function frameLocation($str)
  *
  * TOTAL FUNCTIONS: 43
- * (This index is automatically created/updated by the extension "extdeveval")
+ * (This index is automatically created/updated by the script "update-class-index")
  *
  */
 
@@ -110,7 +112,7 @@ require_once (PATH_t3lib.'class.t3lib_clipboard.php');
  * Class for generating the click menu
  *
  * @author	Kasper Skaarhoj <kasper@typo3.com>
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @package TYPO3
  * @subpackage damcatedit
  * @internal
@@ -119,7 +121,7 @@ class tx_damcatedit_clickMenu {
 
 		// Internal, static: GPvar:
 	var $cmLevel=0;				// Defines if the click menu is first level or second. Second means the click menu is triggered from another menu.
-	var $CB;					// Clipboard array (submitted by eg. pressing the paste button)
+	var $CB;					// Clipboard array(submitted by eg. pressing the paste button)
 
 		// Internal, static:
 	var $backPath='';			// Backpath for scripts/images.
@@ -144,7 +146,7 @@ class tx_damcatedit_clickMenu {
 	var $editOK=0;				// Set to true, if editing of the element is OK.
 	var $rec=array();
 
-	var $item = array (
+	var $item = array(
 		'table' => '',
 		'uid' => '',
 		'file' => '',
@@ -170,7 +172,7 @@ class tx_damcatedit_clickMenu {
 			// Setting flags:
 		if ($params['listFrame'])	$this->listFrame = true;
 		if ($GLOBALS['BE_USER']->uc['condensedMode']) $this->alwaysContentFrame = true;
-		
+
 		if (strcmp($params['uid'],''))	{
 			$this->isDBmenu = true;
 		} else {
@@ -178,10 +180,10 @@ class tx_damcatedit_clickMenu {
 		}
 
 		$TSkey =($this->isDBmenu?'page':'folder').($this->listFrame?'List':'Tree');
-		
+
 		$this->disabledItems = t3lib_div::trimExplode(',',$GLOBALS['BE_USER']->getTSConfigVal('options.contextMenu.'.$TSkey.'.disableItems'),1);
 		$this->enDisItems = $params['enDisItems'];
-		
+
 		$this->leftIcons = $GLOBALS['BE_USER']->getTSConfigVal('options.contextMenu.options.leftIcons');
 
 			// &cmLevel flag detected (2nd level menu)
@@ -357,7 +359,7 @@ class tx_damcatedit_clickMenu {
 	}
 
 	/**
-	 * Processing the $menuItems array (for extension classes) (DATABASE RECORDS)
+	 * Processing the $menuItems array(for extension classes) (DATABASE RECORDS)
 	 *
 	 * @param	array		$menuItems array for manipulation.
 	 * @return	array		Processed $menuItems array
@@ -442,7 +444,7 @@ class tx_damcatedit_clickMenu {
 	function DB_paste($table,$uid,$type,$elInfo)	{
 		$editOnClick = '';
 		$loc = 'top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$conf = $loc.' && confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.'.($elInfo[2]=='copy'?'copy':'move').'_'.$type),$elInfo[0],$elInfo[1])).')';
+		$conf = $loc.' && confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.'.($elInfo[2]=='copy'?'copy':'move').'_'.$type),$elInfo[0],$elInfo[1])).')';
 		$editOnClick = 'if('.$conf.'){'.$loc.'.document.location=top.TS.PATH_typo3+\''.$this->clipObj->pasteUrl($table,$uid,0).'&redirect=\'+top.rawurlencode('.$this->frameLocation($loc.'.document').'); hideCM();}';
 
 		return $this->linkItem(
@@ -612,7 +614,7 @@ class tx_damcatedit_clickMenu {
 	 * @internal
 	 */
 	function DB_editRecord($table,$uid)	{
-		$url = 'alt_doc.php?edit['.$table.']['.$uid.']=edit'.$addParam;
+		$url = 'alt_doc.php?edit['.$table.']['.$uid.']=edit';
 		return $this->linkItem(
 			$this->label('edit'),
 			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/edit2.gif','width="12" height="12"').' alt="" />'),
@@ -643,14 +645,14 @@ class tx_damcatedit_clickMenu {
 
 		return $this->linkItem(
 ###			$this->label('new'),
-			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:dam_catedit/locallang_cm.php:tx_damcatedit_cm1.newSubCat',1)),
+			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:dam_catedit/locallang_cm.xml:tx_damcatedit_cm1.newSubCat',1)),
 			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/new_'.($table=='pages'&&$this->listFrame?'page':'el').'.gif','width="'.($table=='pages'?'13':'11').'" height="12"').' alt="" />'),
 			$editOnClick.'return hideCM();'
 		);
-		
-		
-		
-		
+
+
+
+
 	}
 
 	/**
@@ -658,14 +660,14 @@ class tx_damcatedit_clickMenu {
 	 *
 	 * @param	string		Table name
 	 * @param	integer		UID for the current record.
-	 * @param	array		Label for including in the confirmation message, EXT:lang/locallang_core.php:mess.delete
+	 * @param	array		Label for including in the confirmation message, EXT:lang/locallang_core.xml:mess.delete
 	 * @return	array		Item array, element in $menuItems
 	 * @internal
 	 */
 	function DB_delete($table,$uid,$elInfo)	{
 		$editOnClick='';
 		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.delete'),$elInfo[0])).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
+		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$elInfo[0])).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
 			"&cmd[".$table.']['.$uid.'][delete]=1&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
 
 		return $this->linkItem(
@@ -722,7 +724,7 @@ class tx_damcatedit_clickMenu {
 
 	/**
 	 * Adding CM element for a flag field of the input record
-	 * 
+	 *
 	 * @param	string		Table name
 	 * @param	array		Record array
 	 * @param	string		Name of the flag field
@@ -732,18 +734,18 @@ class tx_damcatedit_clickMenu {
 	 * @return	array		Item array, element in $menuItems
 	 */
 	function DB_changeFlag($table, $rec, $flagField, $title, $name, $iconRelPath='gfx/')    {
-	    $uid=$rec['uid'];
-	    $editOnClick='';
-	    $loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-	    $editOnClick='if('.$loc.'){'.$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
-	        "&data[".$table.']['.$uid.']['.$flagField.']='.($rec[$flagField]?0:1).'&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
-	
-	    return $this->linkItem(
-	        $title,
-	        $this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,$iconRelPath.'button_'.($rec[$flagField]?'un':'').$name.'.gif','width="11" height="10"').' alt="" />'),
-	        $editOnClick.'return false;',
-	        1
-	    );
+		$uid=$rec['uid'];
+		$editOnClick='';
+		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
+		$editOnClick='if('.$loc.'){'.$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
+			"&data[".$table.']['.$uid.']['.$flagField.']='.($rec[$flagField]?0:1).'&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
+
+		return $this->linkItem(
+			$title,
+			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,$iconRelPath.'button_'.($rec[$flagField]?'un':'').$name.'.gif','width="11" height="10"').' alt="" />'),
+			$editOnClick.'return false;',
+			1
+		);
 	}
 
 
@@ -824,7 +826,7 @@ class tx_damcatedit_clickMenu {
 
 
 	/**
-	 * Processing the $menuItems array (for extension classes) (FILES)
+	 * Processing the $menuItems array(for extension classes) (FILES)
 	 *
 	 * @param	array		$menuItems array for manipulation.
 	 * @return	array		Processed $menuItems array
@@ -892,7 +894,7 @@ class tx_damcatedit_clickMenu {
 	function FILE_delete($path)	{
 		$editOnClick='';
 		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.delete'),basename($path))).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_file.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
+		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),basename($path))).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_file.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
 			"&file[delete][0][data]=".rawurlencode($path).'&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
 
 		return $this->linkItem(
@@ -914,7 +916,7 @@ class tx_damcatedit_clickMenu {
 	function FILE_paste($path,$target,$elInfo)	{
 		$editOnClick='';
 		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$conf=$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.'.($elInfo[2]=='copy'?'copy':'move').'_into'),$elInfo[0],$elInfo[1])).")";
+		$conf=$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.'.($elInfo[2]=='copy'?'copy':'move').'_into'),$elInfo[0],$elInfo[1])).")";
 		$editOnClick='if('.$conf.'){'.$loc.".document.location=top.TS.PATH_typo3+'".$this->clipObj->pasteUrl('_FILE',$path,0).
 			"&redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').'); hideCM();}';
 
@@ -979,7 +981,7 @@ class tx_damcatedit_clickMenu {
 						'</td>
 
 							<!-- Close button: -->
-						<td class="c-closebutton"><a href="#" onclick="hideCM();return false;"><img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/close_12h.gif','width="11" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.close',1).'" alt="" /></a></td>
+						<td class="c-closebutton"><a href="#" onclick="hideCM();return false;"><img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/close_12h.gif','width="11" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:labels.close',1).'" alt="" /></a></td>
 
 							<!-- The item of the clickmenu: -->
 						<td class="c-itemicon">'.$item.'</td>
@@ -1105,7 +1107,7 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 		}
 		return $out;
 	}
-	
+
 	/**
 	 * Adds or inserts a menu item
 	 * Can be used to set the position of new menu entries within the list of existing menu entries. Has this syntax: [cmd]:[menu entry key],[cmd].... cmd can be "after", "before" or "top" (or blank/"bottom" which is default). If "after"/"before" then menu items will be inserted after/before the existing entry with [menu entry key] if found. "after-spacer" and "before-spacer" do the same, but inserts before or after an item and a spacer. If not found, the bottom of list. If "top" the items are inserted in the top of the list.
@@ -1117,19 +1119,19 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 	 */
 	function addMenuItems($menuItems,$newMenuItems,$position='')	{
 		if (is_array($newMenuItems))	{
-			
+
 			if($position) {
-			
+
 				$posArr = t3lib_div::trimExplode(',', $position, 1);
 				foreach($posArr as $pos) {
 					list($place,$menuEntry) = t3lib_div::trimExplode(':', $pos, 1);
-					list($place,$placeExtra) = t3lib_div::trimExplode('-', $place, 1);	
-		
+					list($place,$placeExtra) = t3lib_div::trimExplode('-', $place, 1);
+
 						// bottom
 					$pointer = count($menuItems);
-					
+
 					$found=FALSE;
-						
+
 					if ($place) {
 						switch(strtolower($place))	{
 							case 'after':
@@ -1147,7 +1149,7 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 										$p++;
 									}
 									if (!$found) break;
-									
+
 									if ($place=='before') {
 										$pointer--;
 										if ($placeExtra=='spacer' AND prev($menuItems)=='spacer') {
@@ -1177,10 +1179,10 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 			$menuItemsBefore = array_slice($menuItems, 0, ($pointer?$pointer:0));
 			$menuItemsAfter = array_slice($menuItems, $pointer);
 			$menuItems = $menuItemsBefore + $newMenuItems + $menuItemsAfter;
-		} 
+		}
 		return $menuItems;
 	}
-	
+
 	/**
 	 * Creating an array with various elements for the clickmenu entry
 	 *
@@ -1192,6 +1194,8 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 	 * @return	array		$menuItem entry with 6 numerical entries: [0] is the HTML for display of the element with link and icon an mouseover etc., [1]-[5] is simply the input params passed through!
 	 */
 	function linkItem($str,$icon,$onClick,$onlyCM=0,$dontHide=0)	{
+		global $BACK_PATH;
+
 		$this->elCount++;
 
 		$WHattribs = t3lib_iconWorks::skinImg($BACK_PATH,'gfx/content_client.gif','width="7" height="10"',2);
@@ -1300,13 +1304,13 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 	}
 
 	/**
-	 * Get label from locallang_core.php:cm.*
+	 * Get label from locallang_core.xml:cm.*
 	 *
 	 * @param	string		The "cm."-suffix to get.
 	 * @return	string
 	 */
 	function label($label)	{
-		return $GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.'.$label,1));
+		return $GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.'.$label,1));
 	}
 
 	/**

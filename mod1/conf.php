@@ -13,5 +13,5 @@ $MCONF['script']='index.php';
 $MCONF['navFrameScript']='tx_dam_catedit_navframe.php';
 
 $MLANG['default']['tabs_images']['tab'] = 'moduleicon.gif';
-$MLANG['default']['ll_ref']='LLL:EXT:dam_catedit/mod1/locallang_mod.php';
+$MLANG['default']['ll_ref']='LLL:EXT:dam_catedit/mod1/locallang_mod.xml';
 ?>

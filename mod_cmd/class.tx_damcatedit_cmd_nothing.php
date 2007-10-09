@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2003-2005 René Fritz (r.fritz@colorcube.de)
+*  (c) 2003-2006 Rene Fritz (r.fritz@colorcube.de)
 *  All rights reserved
 *
 *  This script is part of the Typo3 project. The Typo3 project is
@@ -24,14 +24,21 @@
 /**
  * Command module 'no command'
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @package TYPO3
  * @subpackage tx_damcatedit
  */
 /**
  * [CLASS/FUNCTION INDEX of SCRIPT]
  *
-
+ *
+ *
+ *   57: class tx_damcatedit_cmd_nothing extends t3lib_extobjbase
+ *   65:     function head()
+ *   77:     function main()
+ *
+ * TOTAL FUNCTIONS: 2
+ * (This index is automatically created/updated by the script "update-class-index")
  *
  */
 
@@ -43,7 +50,7 @@ require_once(PATH_t3lib.'class.t3lib_extobjbase.php');
 /**
  * "no command" module
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @package TYPO3
  * @subpackage tx_damcatedit
  */
@@ -52,13 +59,13 @@ class tx_damcatedit_cmd_nothing extends t3lib_extobjbase {
 
 	/**
 	 * Do some init things and set some things in HTML header
-	 * 
-	 * @return	void		
+	 *
+	 * @return	void
 	 */
 	function head() {
-		global $LANG, $SOBE, $BACK_PATH, $TYPO3_CONF_VARS;
+		global $LANG, $BACK_PATH, $TYPO3_CONF_VARS;
 
-		$SOBE->pageTitle = $LANG->getLL('tx_damcatedit_cmd_nothing.title');
+		$GLOBALS['SOBE']->pageTitle = $LANG->getLL('tx_damcatedit_cmd_nothing.title');
 	}
 
 
@@ -68,13 +75,13 @@ class tx_damcatedit_cmd_nothing extends t3lib_extobjbase {
 	 * @return	void
 	 */
 	function main()	{
-		global $LANG, $SOBE;
+		global $LANG;
 
 		$content ='';
 
 
 		$content.= $this->pObj->wrongCommandMessage();
-		
+
 		$content.= '<br /><br />'.$this->pObj->btn_back('',$this->pObj->returnUrl);
 
 

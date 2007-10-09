@@ -38,31 +38,39 @@
  *
  *
  *
- *   85: class t3lib_positionMap
+ *   90: class localPageTree extends t3lib_treeView
+ *  102:     function init($clause='')
+ *  134:     function expandNext($id)
+ *  151:     function PMicon($row,$a,$c,$nextCount,$exp)
+ *  165:     function wrapIcon($icon,$row)
+ *  176:     function initializePositionSaving()
+ *
+ *
+ *  194: class tx_damcatedit_positionMap
  *
  *              SECTION: Page position map:
- *  132:     function positionTree($id,$pageinfo,$perms_clause,$R_URI)
- *  246:     function JSimgFunc($prefix='')
- *  276:     function boldTitle($t_code,$dat,$id)
- *  293:     function onClickEvent($pid,$newPagePID)
- *  312:     function insertlabel()
- *  324:     function linkPageTitle($str,$rec)
- *  335:     function checkNewPageInPid($pid)
- *  351:     function getModConfig($pid)
- *  366:     function insertQuadLines($codes,$allBlank=0)
+ *  241:     function positionTree($id,$pageinfo,$perms_clause,$R_URI)
+ *  355:     function JSimgFunc($prefix='')
+ *  385:     function boldTitle($t_code,$dat,$id)
+ *  402:     function onClickEvent($pid,$newPagePID)
+ *  421:     function insertlabel()
+ *  433:     function linkPageTitle($str,$rec)
+ *  444:     function checkNewPageInPid($pid)
+ *  460:     function getModConfig($pid)
+ *  475:     function insertQuadLines($codes,$allBlank=0)
  *
  *              SECTION: Content element positioning:
- *  404:     function printContentElementColumns($pid,$moveUid,$colPosList,$showHidden,$R_URI)
- *  440:     function printRecordMap($lines,$colPosArray)
- *  478:     function wrapColumnHeader($str,$vv)
- *  492:     function insertPositionIcon($row,$vv,$kk,$moveUid,$pid)
- *  509:     function onClickInsertRecord($row,$vv,$moveUid,$pid,$sys_lang=0)
- *  529:     function wrapRecordHeader($str,$row)
- *  539:     function getRecordHeader($row)
- *  552:     function wrapRecordTitle($str,$row)
+ *  513:     function printContentElementColumns($pid,$moveUid,$colPosList,$showHidden,$R_URI)
+ *  549:     function printRecordMap($lines,$colPosArray)
+ *  587:     function wrapColumnHeader($str,$vv)
+ *  601:     function insertPositionIcon($row,$vv,$kk,$moveUid,$pid)
+ *  618:     function onClickInsertRecord($row,$vv,$moveUid,$pid,$sys_lang=0)
+ *  638:     function wrapRecordHeader($str,$row)
+ *  648:     function getRecordHeader($row)
+ *  661:     function wrapRecordTitle($str,$row)
  *
- * TOTAL FUNCTIONS: 17
- * (This index is automatically created/updated by the extension "extdeveval")
+ * TOTAL FUNCTIONS: 22
+ * (This index is automatically created/updated by the script "update-class-index")
  *
  */
 
@@ -74,7 +82,7 @@ require_once (PATH_t3lib.'class.t3lib_treeview.php');
  * Class for generating a page tree.
  *
  * @author	Kasper Skaarhoj <kasper@typo3.com>
- * @coauthor	René Fritz <r.fritz@colorcube.de>
+ * @coauthor	Rene Fritz <r.fritz@colorcube.de>
  * @see t3lib_treeView, t3lib_browseTree
  * @package TYPO3
  * @subpackage t3lib
@@ -93,7 +101,7 @@ class localPageTree extends t3lib_treeView	{
 	 */
 	function init($clause='')	{
 		global $LANG, $BACK_PATH;
-		
+
 		parent::init(' AND deleted=0 '.$clause, 'tx_dam_cat.sorting,tx_dam_cat.title');
 
 
@@ -104,7 +112,7 @@ class localPageTree extends t3lib_treeView	{
 		$this->domIdPrefix=$this->treeName;
 
 
-		$this->title=$LANG->sL('LLL:EXT:dam/lib/locallang.php:categories',1);
+		$this->title=$LANG->sL('LLL:EXT:dam/lib/locallang.xml:categories',1);
 
 		$this->iconName = 'cat.gif';
 		$this->iconPath = $BACK_PATH.PATH_txdam_rel.'i/';
@@ -157,7 +165,7 @@ class localPageTree extends t3lib_treeView	{
 	function wrapIcon($icon,$row)	{
 		return $this->addTagAttributes($icon,' title="id='.htmlspecialchars($row['uid']).'"');
 	}
-	
+
 	/**
 	 * Get stored tree structure AND updating it if needed according to incoming PM GET var.
 	 * - Here we just set it to nothing since we want to just render the tree, nothing more.

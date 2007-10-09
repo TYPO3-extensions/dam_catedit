@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2004 René Fritz (r.fritz@colorcube.de)
+*  (c) 2004-2006 Rene Fritz (r.fritz@colorcube.de)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,7 +24,7 @@
 /**
  * Module 'Categories' for the 'dam_catedit' extension.
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  */
 
 
@@ -34,7 +34,7 @@ unset($MCONF);
 require ('conf.php');
 require ($BACK_PATH.'init.php');
 require ($BACK_PATH.'template.php');
-$LANG->includeLLFile('EXT:dam_catedit/mod1/locallang.php');
+$LANG->includeLLFile('EXT:dam_catedit/mod1/locallang.xml');
 
 $BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users has no permission for entry.
 	// DEFAULT initialization of a module [END]
@@ -43,13 +43,13 @@ $BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users
 
 require_once (PATH_t3lib.'class.t3lib_scbase.php');
 
-define('PATH_txdam', t3lib_extMgm::extPath('dam'));
 require_once(PATH_txdam.'lib/class.tx_dam_scbase.php');
 
-$LANG->includeLLFile('EXT:lang/locallang_mod_web_list.php');
+$LANG->includeLLFile('EXT:lang/locallang_mod_web_list.xml');
 
-require_once(PATH_txdam.'modfunc_list_list/class.tx_dam_db_list.php');
-require_once(PATH_txdam.'lib/class.tx_dam_db.php');
+#require_once(t3lib_extmgm::extPath('dam_catedit').'class.tx_dam_db_list.php');
+require_once(t3lib_extmgm::extPath('dam_catedit').'class.tx_dam_db_list2.php');
+require_once(PATH_txdam.'lib/class.tx_dam_sysfolder.php');
 require_once(t3lib_extmgm::extPath('dam_catedit').'lib/class.tx_damcatedit_db.php');
 
 
@@ -63,8 +63,8 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 		global $BE_USER,$LANG,$BACK_PATH,$TCA,$TYPO3_CONF_VARS;
 
 
-list($this->defaultPid,$this->defaultFolder,$this->folderList) = tx_dam_db::initDAMFolders();
-$this->id = $this->id ? $this->id : $this->defaultPid;
+		$this->defaultPid = tx_dam_db::getPid();
+		$this->id = $this->id ? $this->id : $this->defaultPid;
 
 
 		// Access check!
@@ -77,7 +77,7 @@ $this->id = $this->id ? $this->id : $this->defaultPid;
 				// Draw the header.
 			$this->doc = t3lib_div::makeInstance('mediumDoc');
 			$this->doc->backPath = $BACK_PATH;
-			$this->doc->form='<form action="" method="POST">';
+			$this->doc->form='<form action="" method="post">';
 
 				// JavaScript
 			$this->doc->JScode = '
@@ -94,7 +94,11 @@ $this->id = $this->id ? $this->id : $this->defaultPid;
 				</script>
 			';
 
-			###$headerSection = $this->doc->getHeader('pages',$this->pageinfo,$this->pageinfo['_thePath']).'<br>'.$LANG->sL('LLL:EXT:lang/locallang_core.php:labels.path').': '.t3lib_div::fixed_lgd_pre($this->pageinfo['_thePath'],50);
+
+				// should be done on changes only, but that's not possible (tce_db.php react on 'pages' only)
+			t3lib_BEfunc::getSetUpdateSignal('updatePageTree');
+
+			###$headerSection = $this->doc->getHeader('pages',$this->pageinfo,$this->pageinfo['_thePath']).'<br>'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.path',1).': '.t3lib_div::fixed_lgd_pre($this->pageinfo['_thePath'],50);
 
 			$this->content.=$this->doc->startPage($LANG->getLL('title'));
 			$this->content.=$this->doc->header($LANG->getLL('title'));
@@ -157,10 +161,9 @@ $this->id = $this->id ? $this->id : $this->defaultPid;
 			$treedb->init('tx_dam_cat', 'parent_id');
 			$treedb->setPidList($this->id);
 
-			$this->resCountAll = $treedb->countSubRecords($uid);
-			$this->setSelectionCounter();
+			$this->selection->pointer->setTotalCount($treedb->countSubRecords($uid));
 
-			if($this->resCountAll) {
+			if($this->selection->pointer->countTotal) {
 
 
 				$dblist = t3lib_div::makeInstance('tx_dam_db_list');
@@ -171,12 +174,9 @@ $this->id = $this->id ? $this->id : $this->defaultPid;
 				$dblist->staticParams = '&SLCMD[SELECT][txdamCat]['.$uid.']=1';
 				$dblist->calcPerms = $BE_USER->calcPerms($this->pageinfo);
 				$dblist->alternateBgColors=$this->modTSconfig['properties']['alternateBgColors']?1:0;
+				$dblist->thumbs = false;
 
-				$dblist->resCountAll = $this->resCountAll;
-				$dblist->pointer = $this->pointer;
-				$dblist->resultsPerPage= $this->resultsPerPage;
-				$dblist->firstItemNum = $this->firstItemNum;
-				$dblist->lastItemNum = $this->lastItemNum;
+				$dblist->pointer = $this->selection->pointer;
 
 				$dblist->searchString = trim(t3lib_div::_GP('search_field'));
 				$dblist->sortField = t3lib_div::_GP('sortField');
@@ -184,10 +184,9 @@ $this->id = $this->id ? $this->id : $this->defaultPid;
 
 
 				$dblist->setDispFields();
-				#debug($dblist->setFields);
 				#		$fieldList	= 'tx_dam_cat.'.implode(',tx_dam_cat.',t3lib_div::trimExplode(',',$dblist->setFields['tx_dam_cat'],1));
-				#		$this->qg->query['FROM']['tx_dam_cat']=$fieldList;
-				#debug($fieldList);
+				#		$this->selection->qg->query['FROM']['tx_dam_cat']=$fieldList;
+
 				$orderBy = ($TCA['tx_dam_cat']['ctrl']['sortby']) ? 'tx_dam_cat.'.$TCA['tx_dam_cat']['ctrl']['sortby'] : 'tx_dam_cat.sorting';
 
 				if ($dblist->sortField)	{
@@ -204,13 +203,13 @@ $this->id = $this->id ? $this->id : $this->defaultPid;
 
 
 	#TODO ???				// It is set, if the clickmenu-layer is active AND the extended view is not enabled.
-				$dblist->dontShowClipControlPanels = $CLIENT['FORMSTYLE'] && !$BE_USER->uc['disableCMlayers'];
+#				$dblist->dontShowClipControlPanels = $CLIENT['FORMSTYLE'] && !$BE_USER->uc['disableCMlayers'];
 
 				$dblist->generateList();
 
 
 					// JavaScript
-				$this->doc->JScodeArray['redirectUrls'] = $this->doc->redirectUrls(t3lib_extMgm::extRelPath('dam_catedit').'mod1/'.$dblist->listURL());
+				$this->doc->JScodeArray['redirectUrls'] = $this->doc->redirectUrls(t3lib_div::getIndpEnv('REQUEST_URI'));
 				$this->doc->JScodeArray['jumpExt'] = '
 					function jumpExt(URL,anchor)	{
 						var anc = anchor?anchor:"";
@@ -219,7 +218,7 @@ $this->id = $this->id ? $this->id : $this->defaultPid;
 					';
 
 
-				$content.= '<form action="'.$dblist->listURL().'" method="POST" name="dblistForm">';
+				$content.= '<form action="'.$dblist->listURL().'" method="post" name="dblistForm">';
 				$content.= $dblist->HTMLcode;
 				$content.= '<input type="hidden" name="cmd_table"><input type="hidden" name="cmd"></form>';
 				$content.= $dblist->fieldSelectBox();

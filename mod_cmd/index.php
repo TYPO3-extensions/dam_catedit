@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2003-2005 René Fritz (r.fritz@colorcube.de)
+*  (c) 2003-2006 Rene Fritz (r.fritz@colorcube.de)
 *  All rights reserved
 *
 *  This script is part of the Typo3 project. The Typo3 project is
@@ -24,7 +24,7 @@
 /**
  * damcatedit command module
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @package TYPO3
  * @subpackage tx_damcatedit
  */
@@ -43,7 +43,7 @@ require ($BACK_PATH.'template.php');
 
 require_once (PATH_t3lib.'class.t3lib_scbase.php');
 
-$LANG->includeLLFile('EXT:dam_catedit/mod_cmd/locallang.php');
+$LANG->includeLLFile('EXT:dam_catedit/mod_cmd/locallang.xml');
 
 
 // Module is available to everybody
@@ -53,8 +53,8 @@ $LANG->includeLLFile('EXT:dam_catedit/mod_cmd/locallang.php');
 
 /**
  * Script class for the damcatedit command script
- * 
- * @author	René Fritz <r.fritz@colorcube.de>
+ *
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @package TYPO3
  * @subpackage tx_dam
  */
@@ -79,13 +79,13 @@ class tx_damcatedit_mod_cmd extends t3lib_SCbase {
 
 	/**
 	 * Initializes the backend module
-	 * 
-	 * @return	void		
+	 *
+	 * @return	void
 	 */
 	function init()	{
-		global $BE_USER, $SOBE, $TYPO3_CONF_VARS, $FILEMOUNTS;
+		global $BE_USER, $TYPO3_CONF_VARS, $FILEMOUNTS;
 $TYPO3_CONF_VARS['SYS']['doNotCheckReferer']=1;
-#TODO
+// TODO veriCode used/working?
 		$this->vC = t3lib_div::_GP('vC');
 
 			// Checking referer / executing
@@ -101,7 +101,7 @@ $TYPO3_CONF_VARS['SYS']['doNotCheckReferer']=1;
 		parent::init();
 
 
-#TODO			// Initialize GPvars:
+// TODO			// Initialize GPvars:
 		$this->data = t3lib_div::_GP('data');
 		$this->returnUrl = t3lib_div::_GP('returnUrl');
 		$this->returnUrl = $this->returnUrl ? $this->returnUrl : t3lib_div::getIndpEnv('HTTP_REFERER');
@@ -151,8 +151,8 @@ $TYPO3_CONF_VARS['SYS']['doNotCheckReferer']=1;
 
 	/**
 	 * Main function of the module. Write the content to $this->content
-	 * 
-	 * @return	void		
+	 *
+	 * @return	void
 	 */
 	function main()	{
 		global $BE_USER, $LANG, $BACK_PATH, $TYPO3_CONF_VARS, $HTTP_GET_VARS, $HTTP_POST_VARS;
@@ -166,15 +166,6 @@ $TYPO3_CONF_VARS['SYS']['doNotCheckReferer']=1;
 		$this->doc->backPath = $BACK_PATH;
 		$this->doc->docType = 'xhtml_trans';
 
-
-#debug($HTTP_GET_VARS, '$HTTP_GET_VARS', __LINE__, __FILE__);
-#debug(t3lib_div::_GET(), '_GET()', __LINE__, __FILE__);
-#debug($HTTP_POST_VARS, '$HTTP_POST_VARS', __LINE__, __FILE__);
-#debug($GLOBALS['SOBE']->MOD_SETTINGS, '$GLOBALS[SOBE]->MOD_SETTINGS', __LINE__, __FILE__);
-#debug($this->SLCMD, 'SLCMD', __LINE__, __FILE__);
-#debug($this->MOD_MENU,'MOD_MENU', __LINE__, __FILE__);
-#debug($this->MOD_MENU['function'],'$this->MOD_MENU[function]', __LINE__, __FILE__);
-#debug($this->MOD_SETTINGS['function'],'$this->MOD_SETTINGS[function]', __LINE__, __FILE__);
 
 
 		// Access check...
@@ -256,7 +247,7 @@ $access = TRUE;
 			// Output page header
 			//
 			$this->actionTarget = $this->actionTarget ? $this->actionTarget : t3lib_div::linkThisScript();
-			$this->doc->form='<form action="'.htmlspecialchars($this->actionTarget).'" method="POST" name="editform" enctype="'.$TYPO3_CONF_VARS['SYS']['form_enctype'].'">';
+			$this->doc->form='<form action="'.htmlspecialchars($this->actionTarget).'" method="post" name="editform" enctype="'.$TYPO3_CONF_VARS['SYS']['form_enctype'].'">';
 
 				// JavaScript
 			$this->doc->JScodeArray['jumpToUrl'] = '
@@ -299,7 +290,7 @@ $access = TRUE;
 			$this->content.= $this->doc->startPage($LANG->getLL('title'));
 			$this->content.= $this->doc->header($LANG->getLL('title'));
 			$this->content.= $this->doc->spacer(5);
-#TODO
+			$this->content.= $this->doc->section('', $LANG->sL('LLL:EXT:lang/locallang_mod_web_perm.xml:A_Denied',1));
 			$this->content.= $this->doc->spacer(10);
 		}
 
@@ -308,12 +299,10 @@ $access = TRUE;
 
 	/**
 	 * Prints out the module HTML
-	 * 
+	 *
 	 * @return	string		HTML
 	 */
 	function printContent()	{
-		global $SOBE;
-
 		$this->content.= $this->doc->middle();
 		$this->content.= $this->doc->endPage();
 		$this->content=$this->doc->insertStylesAndJS($this->content);
@@ -322,22 +311,22 @@ $access = TRUE;
 
 	/**
 	 * Returns a message that the passed command was wrong
-	 * 
+	 *
 	 * @return	string 	HTML content
 	 */
 	function wrongCommandMessage()	{
-		global $SOBE, $LANG;
+		global  $LANG;
 
-		$content = $SOBE->doc->section('',$SOBE->doc->icons(2).' '.$LANG->getLL('tx_damcatedit_cmd_nothing.message'));
-		if ($SOBE->CMD) {
-			$content.= $SOBE->doc->section('Command:',htmlspecialchars($SOBE->CMD), 0,0);
+		$content = $GLOBALS['SOBE']->doc->section('',$GLOBALS['SOBE']->doc->icons(2).' '.$LANG->getLL('tx_damcatedit_cmd_nothing.message'));
+		if ($GLOBALS['SOBE']->CMD) {
+			$content.= $GLOBALS['SOBE']->doc->section('Command:',htmlspecialchars($GLOBALS['SOBE']->CMD), 0,0);
 		}
 		return $content;
 	}
 
 	/**
 	 * Send redirect header
-	 * 
+	 *
 	 * @return	void
 	 */
 	function redirect()	{
@@ -354,7 +343,7 @@ $access = TRUE;
 
 	/**
 	 * Button: go back
-	 * 
+	 *
 	 * @param	array		Params array. Used to build a url with t3lib_div::linkThisScript()
 	 * @param	string		Full url which should be the link href
 	 * @return	string		Button HTML code
@@ -369,7 +358,7 @@ $access = TRUE;
 		}
 
 		$content = '<a href="'.htmlspecialchars($url).'" class="typo3-goBack">'.
-					'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/goback.gif"','width="14" height="14"').' class="absmiddle" alt="" /> Go back'.
+					'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/goback.gif"','width="14" height="14"').' class="absmiddle" alt="" /> '.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.goBack',1).
 					'</a>';
 
 		return $content;

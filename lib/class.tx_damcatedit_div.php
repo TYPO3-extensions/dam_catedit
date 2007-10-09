@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *  
-*  (c) 2004 René Fritz (r.fritz@colorcube.de)
+*  (c) 2004-2006 Rene Fritz (r.fritz@colorcube.de)
 *  All rights reserved
 *
 *  This script is part of the Typo3 project. The Typo3 project is 
@@ -28,7 +28,7 @@
  * div functions
  *
  *
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  */
 
 class tx_damcatedit_div {
@@ -73,7 +73,7 @@ class tx_damcatedit_div {
 		
 		$backPath = '&backPath='.rawurlencode($GLOBALS['BACK_PATH']).'|'.t3lib_div::shortMD5($GLOBALS['BACK_PATH'].'|'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
 		
-		$paramsArr = array('table'=>$table,'uid'=>$uid,'listFrame'=>$listFrame,'enDisItems'=>$enDisItems);
+		$paramsArr = array('table' => $table,'uid' => $uid,'listFrame' => $listFrame,'enDisItems' => $enDisItems);
 		$itemParam = tx_damcatedit_div::compilePipeParams($paramsArr);
 		
 		$onClick = 'top.loadTopMenu(\''.$clickMenuScript.'?item='.rawurlencode($itemParam).$backPath.$cmdMod.$addParams.'\');'.template::thisBlur().'return false;';

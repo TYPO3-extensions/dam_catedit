@@ -40,7 +40,7 @@
  * XHTML compliant
  *
  * @author	Kasper Skaarhoj <kasper@typo3.com>
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  */
 /**
  * [CLASS/FUNCTION INDEX of SCRIPT]
@@ -79,7 +79,7 @@ require_once(t3lib_extmgm::extPath('dam_catedit').'lib/class.tx_damcatedit_div.p
  * Script Class for the Context Sensitive Menu in TYPO3 (rendered in top frame, normally writing content dynamically to list frames).
  *
  * @author	Kasper Skaarhoj <kasper@typo3.com>
- * @author	René Fritz <r.fritz@colorcube.de>
+ * @author	Rene Fritz <r.fritz@colorcube.de>
  * @package TYPO3
  * @subpackage damcatedit
  * @see template::getContextMenuCode()
