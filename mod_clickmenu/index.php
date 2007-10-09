@@ -35,12 +35,12 @@
  *
  * If you want to integrate a context menu in your scripts, please see template::getContextMenuCode()
  *
- * $Id: index.php,v 1.1 2004/10/28 07:14:16 cvsrene Exp $
+ * $Id: index.php,v 1.1 2004/09/10 08:50:48 cvsrene Exp $
  * Revised for TYPO3 3.6 2/2003 by Kasper Skaarhoj
  * XHTML compliant
  *
  * @author	Kasper Skaarhoj <kasper@typo3.com>
- * @author	Rene Fritz <r.fritz@colorcube.de>
+ * @author	René Fritz <r.fritz@colorcube.de>
  */
 /**
  * [CLASS/FUNCTION INDEX of SCRIPT]
@@ -79,7 +79,7 @@ require_once(t3lib_extmgm::extPath('dam_catedit').'lib/class.tx_damcatedit_div.p
  * Script Class for the Context Sensitive Menu in TYPO3 (rendered in top frame, normally writing content dynamically to list frames).
  *
  * @author	Kasper Skaarhoj <kasper@typo3.com>
- * @author	Rene Fritz <r.fritz@colorcube.de>
+ * @author	René Fritz <r.fritz@colorcube.de>
  * @package TYPO3
  * @subpackage damcatedit
  * @see template::getContextMenuCode()

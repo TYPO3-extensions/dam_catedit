@@ -10,6 +10,6 @@ $MCONF['access']='';
 $MCONF['script']='index.php';
 
 $MLANG['default']['tabs_images']['tab'] = 'moduleicon.gif';
-$MLANG['default']['ll_ref']='LLL:EXT:dam_catedit/mod_clickmenu/locallang_mod.xml';
+$MLANG['default']['ll_ref']='LLL:EXT:dam_catedit/mod_clickmenu/locallang_mod.php';
 
 ?>
