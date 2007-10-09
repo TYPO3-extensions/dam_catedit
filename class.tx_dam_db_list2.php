@@ -340,7 +340,7 @@ $this->alternateBgColors = false;
 						$theData[$fCol]=t3lib_BEfunc::getProcessedValueExtra($table,$fCol,$row[$fCol],100);
 					}
 				}
-
+$actionIcon='';
 				$itemContentTRows.=$this->addElement($theIcon, $theData, $actionIcon, $row_bgColor, '', true);
 
 					// Thumbsnails?
