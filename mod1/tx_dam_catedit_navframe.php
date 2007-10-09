@@ -34,16 +34,16 @@
  *
  *
  *
- *   73: class tx_dam_navframe
- *   89:     function init()
- *  111:     function jumpTo(params,linkObj,highLightID)
- *  127:     function refresh_nav()
- *  136:     function _refresh_nav()
- *  179:     function main()
- *  207:     function printContent()
+ *   76: class tx_damcatedit_navframe
+ *   87:     function init()
+ *  106:     function jumpTo(params,linkObj,highLightID)
+ *  122:     function refresh_nav()
+ *  127:     function _refresh_nav()
+ *  194:     function main()
+ *  232:     function printContent()
  *
  * TOTAL FUNCTIONS: 6
- * (This index is automatically created/updated by the extension "extdeveval")
+ * (This index is automatically created/updated by the script "update-class-index")
  *
  */
 

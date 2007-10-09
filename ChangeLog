@@ -1,3 +1,7 @@
+06-09-14 Rene Fritz  <r.fritz@colorcube.de>
+
+	* Fix: versioning action link works now
+
 06-08-31 Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: Workaround added: delete function in navframe jumped to another submodule when that was called before the current submodule

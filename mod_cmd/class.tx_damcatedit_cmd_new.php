@@ -105,13 +105,13 @@ class tx_damcatedit_cmd_new extends t3lib_extobjbase {
 			$content.= 'wrong comand!';
 		}
 
-// TODO do it always this way (with if)
+#TODO do it always this way (with if)
 		if ($this->pObj->returnUrl) {
 			$content.= '<br /><br />'.$this->pObj->btn_back('',$this->pObj->returnUrl);
 		}
 
 
-			// CSH:
+#TODO csh
 #		$content.= t3lib_BEfunc::cshItem('xMOD_csh_corebe', 'file_rename', $GLOBALS['BACK_PATH'],'<br/>');
 
 

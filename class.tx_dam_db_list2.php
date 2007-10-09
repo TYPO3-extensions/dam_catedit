@@ -131,11 +131,11 @@ class tx_dam_db_list {
 	}
 
 	/**
-	 * [Describe function...]
+	 * Return list of fields that are selected for display
 	 *
-	 * @param	[type]		$table: ...
-	 * @param	[type]		$rowlist: ...
-	 * @return	[type]		...
+	 * @param	string		$table: ...
+	 * @param	string		$rowlist: ...
+	 * @return	string		...
 	 */
 	function getSelFieldList($table,$rowlist)	{
 		global $TCA, $BACK_PATH;
@@ -144,7 +144,7 @@ class tx_dam_db_list {
 			// Init
 		$titleCol = $TCA[$table]['ctrl']['label'];
 		$thumbsCol = $TCA[$table]['ctrl']['thumbnail'];
-//TODO
+#TODO
 $l10nEnabled = false;
 			// Cleaning rowlist for duplicates and place the $titleCol as the first column always!
 		$this->fieldArray=array();
@@ -270,7 +270,7 @@ $l10nEnabled = false;
 #			$theData[$titleCol] = '<b>'.$GLOBALS['LANG']->sL($TCA[$table]['ctrl']['title'],1).'</b> ('.$this->resCount.')';
 			$theUpIcon = '&nbsp;';
 
-				// CSH:
+#TODO csh
 #			$theData[$titleCol].= t3lib_BEfunc::cshItem($table,'',$this->backPath,'',FALSE,'margin-bottom:0px; white-space: normal;');
 
 #			$out.=$this->addelement($theUpIcon, $theData, '', '', 'background-color:'.$this->headLineCol.'; border-bottom:1px solid #000');
@@ -398,7 +398,7 @@ $this->alternateBgColors = false;
 
 			$out.=$this->addelement('', array(), '', '', 'border-top:1px solid #888');
 
-//TODO
+#TODO
 $LOISmode=false;
 				// ... and it is all wrapped in a table:
 			$out='
@@ -454,7 +454,7 @@ $LOISmode=false;
 
 			// remove sorting
 		if($this->sortField==$field) {
-//TODO title="Revert to default sorting"
+#TODO title="Revert to default sorting"
 			$sortUrl = $this->listURL('',-1,'sortField,sortRev,table').'&table='.$table.'&sortField=';
 			$content.= '&nbsp;<a href="'.htmlspecialchars($sortUrl).'">'.
 					'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/close.gif','width="11" height="10"').' title="Revert to default sorting" alt="" />'.
@@ -534,7 +534,7 @@ $LOISmode=false;
 							$lab = 'V';
 						}
 
-						$cells[]='<a href="'.htmlspecialchars(t3lib_extMgm::extRelPath('version')).'cm1/index.php?table='.rawurlencode($table).'&uid='.rawurlencode($row['uid']).'" style="'.htmlspecialchars($st).'">'.
+						$cells[]='<a href="'.htmlspecialchars($this->backPath.t3lib_extMgm::extRelPath('version')).'cm1/index.php?table='.rawurlencode($table).'&uid='.rawurlencode($row['uid']).'" style="'.htmlspecialchars($st).'">'.
 								$lab.
 								'</a>';
 					}
@@ -612,7 +612,7 @@ $quickDelete = true;
 					// delete
 				if (!$quickDelete AND ( ($table=='pages' && ($localCalcPerms&4)) || ($table!='pages' && ($this->calcPerms&16)) && in_array('delRec',$shEl) ) )	{
 					$cmd = 'tx_dam_cmd_filedelete';
-					$script = $BACK_PATH.PATH_txdam_rel.'mod_cmd/index.php?CMD='.$cmd.'&id='.rawurlencode($row['uid']).'&returnUrl='.t3lib_div::getIndpEnv('TYPO3_REQUEST_URL');
+					$script = $BACK_PATH.PATH_txdam_rel.'mod_cmd/index.php?CMD='.$cmd.'&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.rawurlencode($row['uid']).'&returnUrl='.t3lib_div::getIndpEnv('TYPO3_REQUEST_URL');
 					$cells[] = '<a href="'.htmlspecialchars($script).'">'.
 							'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/delete_record.gif" width="12" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
 							'</a>';
@@ -770,7 +770,7 @@ $quickDelete = true;
 			// Request fields from table:
 		$fields = $this->makeFieldList($table);
 
-//TODO??
+#TODO??
 			// Add pseudo "control" fields
 #		$fields['_PATH_'] = '_PATH_';
 #		$fields['_LOCALIZATION_'] = '_LOCALIZATION_';
@@ -824,7 +824,7 @@ $quickDelete = true;
 			$formElements=array('<form action="'.htmlspecialchars($this->listURL()).'" method="post">','</form>');
 		}
 
-// TODO unused??
+#TODO unused??
 
 			// Table with the search box:
 		$content.= $formElements[0].'
@@ -1023,7 +1023,7 @@ $quickDelete = true;
 	 * @return	string		HTML for thumbnails, if any.
 	 */
 	function thumbCode($row,$table,$field)	{
-//TODO		$file = tx_dam::path_makeAbsolute($row['file_path']).$row['file_name'];
+#TODO		$file = tx_dam::path_makeAbsolute($row['file_path']).$row['file_name'];
 		return t3lib_BEfunc::thumbCode($row,$table,$field,$this->backPath,$this->thumbScript);
 	}
 
