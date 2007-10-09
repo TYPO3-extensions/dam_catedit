@@ -123,10 +123,10 @@ class tx_damcatedit_navframe {
 		
 				// Call this function, refresh_nav(), from another script in the backend if you want to refresh the navigation frame (eg. after having changed a page title or moved pages etc.)
 				// See t3lib_BEfunc::getSetUpdateSignal()
-			function refresh_nav()	{	//
+			function refresh_nav()	{
 				window.setTimeout("_refresh_nav();",0);
 			}
-			function _refresh_nav()	{	//
+			function _refresh_nav()	{
 				window.location.href="'.htmlspecialchars(t3lib_div::getIndpEnv('SCRIPT_NAME').'?unique='.time()).'";
 			}
 		

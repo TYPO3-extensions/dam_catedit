@@ -220,6 +220,9 @@ class SC_tx_damcatedit_clickmenu extends t3lib_SCbase {
 
 			// Create clickmenu object
 		$clickMenu = t3lib_div::makeInstance('tx_damcatedit_clickmenu');
+		
+		// would activate clickmenu on root for non admins - but that doesn't make always sense 
+#		$clickMenu->rec['pid'] = tx_dam_db::getPid();
 
 			// Set internal vars in clickmenu object:
 		$clickMenu->clipObj = $clipObj;

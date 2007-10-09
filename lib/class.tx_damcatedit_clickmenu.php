@@ -105,6 +105,7 @@
 
 
 require_once (PATH_t3lib.'class.t3lib_clipboard.php');
+require_once(t3lib_extmgm::extPath('dam_catedit').'lib/class.tx_damcatedit_div.php');
 
 
 
@@ -257,13 +258,16 @@ $this->listFrame = false;
 		global $TCA, $BE_USER;
 
 			// Get record:
-		$this->rec = t3lib_BEfunc::getRecordWSOL($table,$uid);
+		if ($uid) {
+			$this->rec = t3lib_BEfunc::getRecordWSOL($table,$uid);
+		}
 		$menuItems=array();
 		$root=0;
 		###if ($table=='pages' && !strcmp($uid,'0'))	{	// Rootlevel
 		if ($table=='tx_dam_cat' && !strcmp($uid,'0'))	{	// Rootlevel
 			$root=1;
 		}
+
 
 			// If record found (or root), go ahead and fill the $menuItems array which will contain data for the elements to render.
 		if (is_array($this->rec) || $root)	{
