@@ -27,7 +27,7 @@
 /**
  * Contains class for creating a position map.
  *
- * $Id: class.tx_damcatedit_positionmap.php,v 1.1 2004/09/10 08:50:48 cvsrene Exp $
+ * $Id: class.tx_damcatedit_positionmap.php,v 1.2 2005/06/16 09:26:55 cvsrene Exp $
  * Revised for TYPO3 3.6 November/2003 by Kasper Skaarhoj
  * XHTML compliant (should be)
  *
@@ -94,7 +94,7 @@ class localPageTree extends t3lib_treeView	{
 	function init($clause='')	{
 		global $LANG, $BACK_PATH;
 		
-		parent::init(' AND NOT deleted '.$clause, 'tx_dam_cat.sorting,tx_dam_cat.title');
+		parent::init(' AND deleted=0 '.$clause, 'tx_dam_cat.sorting,tx_dam_cat.title');
 
 
 		$this->table='tx_dam_cat';
@@ -108,7 +108,7 @@ class localPageTree extends t3lib_treeView	{
 
 		$this->iconName = 'cat.gif';
 		$this->iconPath = $BACK_PATH.PATH_txdam_rel.'i/';
-		#$this->clause=' AND NOT deleted ORDER BY sorting,title';
+		#$this->clause=' AND deleted=0 ORDER BY sorting,title';
 		#$this->fieldArray = Array('uid','title');
 		$this->defaultList = 'uid,pid,tstamp,sorting';
 		$this->ext_IconMode = '1'; // no context menu on icons

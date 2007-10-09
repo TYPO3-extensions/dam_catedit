@@ -35,7 +35,7 @@
  *
  * If you want to integrate a context menu in your scripts, please see template::getContextMenuCode()
  *
- * $Id: class.tx_damcatedit_clickmenu.php,v 1.1 2004/09/10 08:50:47 cvsrene Exp $
+ * $Id: class.tx_damcatedit_clickmenu.php,v 1.1 2004/10/28 07:14:16 cvsrene Exp $
  * Revised for TYPO3 3.6 2/2003 by Kasper Skaarhoj
  * XHTML compliant
  *

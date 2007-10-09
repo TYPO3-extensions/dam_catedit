@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2003-2004 René Fritz (r.fritz@colorcube.de)
+*  (c) 2003-2005 René Fritz (r.fritz@colorcube.de)
 *  All rights reserved
 *
 *  This script is part of the Typo3 project. The Typo3 project is
@@ -72,13 +72,13 @@ require_once(PATH_txdam.'lib/class.tx_dam_browsetrees.php');
  * @package TYPO3
  * @subpackage tx_dam
  */
-class tx_dam_navframe {
+class tx_damcatedit_navframe {
 
 	var $categoryTree;
 
 	var $doc;
 	var $content;
-	
+
 		// Internal, static: _GP
 	var $currentSubScript;
 
@@ -91,31 +91,31 @@ class tx_dam_navframe {
 
 
 		$this->currentSubScript = t3lib_div::_GP('currentSubScript');
-		
+
 			// Setting highlight mode:
 		$this->doHighlight = !$BE_USER->getTSConfigVal('options.pageTree.disableTitleHighlight');
-		
+
 
 		$this->doc->JScode='';
 
 			// Setting JavaScript for menu.
 		$this->doc->JScode=$this->doc->wrapScriptTags(
 			($this->currentSubScript?'top.currentSubScript=unescape("'.rawurlencode($this->currentSubScript).'");':'').'
-		
+
 			function jumpTo(params,linkObj,highLightID)	{
 				var theUrl = top.TS.PATH_typo3+top.currentSubScript+"?"+params;
-		
+
 				if (top.condensedMode)	{
 					top.content.document.location=theUrl;
 				} else {
 					parent.list_frame.document.location=theUrl;
 				}
-		        '.($this->doHighlight?'hilight_row("row"+top.fsMod.recentIds["txdamM1"],highLightID);':'').'
+				'.($this->doHighlight?'hilight_row("row"+top.fsMod.recentIds["txdamM1"],highLightID);':'').'
 				'.(!$GLOBALS['CLIENT']['FORMSTYLE'] ? '' : 'if (linkObj) {linkObj.blur();}').'
 				return false;
 			}
-			
-					
+
+
 				// Call this function, refresh_nav(), from another script in the backend if you want to refresh the navigation frame (eg. after having changed a page title or moved pages etc.)
 				// See t3lib_BEfunc::getSetUpdateSignal()
 			function refresh_nav()	{
@@ -130,16 +130,16 @@ class tx_dam_navframe {
 			function _refresh_nav()	{
 				document.location="tx_dam_navframe.php?unique='.time().'";
 			}
-			
+
 				// Highlighting rows in the page tree:
 			function hilight_row(frameSetModule,highLightID) {	//
-		
+
 					// Remove old:
 				theObj = document.getElementById(top.fsMod.navFrameHighlightedID[frameSetModule]);
 				if (theObj)	{
 					theObj.style.backgroundColor="";
 				}
-				
+
 					// Set new:
 				top.fsMod.navFrameHighlightedID[frameSetModule] = highLightID;
 				theObj = document.getElementById(highLightID);
@@ -153,16 +153,16 @@ class tx_dam_navframe {
 		$this->doc->bodyTagAdditions = $CMparts[1];
 		$this->doc->JScode.=$CMparts[0];
 		$this->doc->postCode.= $CMparts[2];
-		
+
 			// should be float but gives bad results
 		$this->doc->inDocStyles .= '
 			.txdam-editbar, .txdam-editbar > a >img {
 				background-color:'.t3lib_div::modifyHTMLcolor($this->doc->bgColor,-15,-15,-15).';
 			}
 			';
-			
 
-		
+
+
 			// the trees
 		$this->browseTrees = t3lib_div::makeInstance('tx_dam_browseTrees');
 			// show only categories:
@@ -170,8 +170,9 @@ class tx_dam_navframe {
 		$this->browseTrees->initSelectionClasses($selClass, 'tx_dam_catedit_navframe.php');
 		$this->browseTrees->arrayTree['txdamCat']->ext_IconMode = '0'; // context menu on icons
 		$this->browseTrees->arrayTree['txdamCat']->modeSelIcons = false;
-		
-		
+		$this->browseTrees->arrayTree['txdamCat']->linkRootCat = true;
+
+
 	}
 
 
@@ -187,9 +188,9 @@ class tx_dam_navframe {
 
 		$this->content = '';
 		$this->content.= $this->doc->startPage('Navigation');
-		
+
 		$this->content.= $this->browseTrees->getTrees();
-		
+
 		$this->content.= '
 			<p class="c-refresh">
 				<a href="'.htmlspecialchars(t3lib_div::getIndpEnv('REQUEST_URI')).'">'.
@@ -201,10 +202,10 @@ class tx_dam_navframe {
 			// Adding highlight - JavaScript
 		if ($this->doHighlight)	$this->content .=$this->doc->wrapScriptTags('
 			hilight_row("",top.fsMod.navFrameHighlightedID["web"]);
-		');	
+		');
 	}
-	
-	
+
+
 	/**
 	 * Outputting the accumulated content to screen
 	 * 
@@ -227,7 +228,7 @@ if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/dam_cat
 
 // Make instance:
 
-$SOBE = t3lib_div::makeInstance('tx_dam_navframe');
+$SOBE = t3lib_div::makeInstance('tx_damcatedit_navframe');
 $SOBE->init();
 $SOBE->main();
 $SOBE->printContent();

@@ -8,9 +8,6 @@
 $LOCAL_LANG = Array (
 	"default" => Array (
 		"title" => "Categories",	
-		"function1" => "Function #1",	
-		"function2" => "Function #2",	
-		"function3" => "Function #3",	
 	),
 	"dk" => Array (
 	),
