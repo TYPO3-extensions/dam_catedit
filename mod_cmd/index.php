@@ -40,7 +40,7 @@
  *  270:     function jumpToUrl(URL)
  *  274:     function jumpBack()
  *  318:     function printContent()
- *  330:     function wrongCommandMessage()
+ *  330:     function wrongCommandMessageBox()
  *  345:     function redirect()
  *  364:     function btn_back($params=array(), $absUrl='')
  *
@@ -327,7 +327,7 @@ $access = TRUE;
 	 *
 	 * @return	string 	HTML content
 	 */
-	function wrongCommandMessage()	{
+	function wrongCommandMessageBox()	{
 		global  $LANG;
 
 		$content = $GLOBALS['SOBE']->doc->section('',$GLOBALS['SOBE']->doc->icons(2).' '.$LANG->getLL('tx_damcatedit_cmd_nothing.message'));

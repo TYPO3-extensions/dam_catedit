@@ -114,7 +114,7 @@ class tx_damcatedit_cmd_new extends t3lib_extobjbase {
 		}
 
 
-#TODO csh
+// todo csh
 #		$content.= t3lib_BEfunc::cshItem('xMOD_csh_corebe', 'file_rename', $GLOBALS['BACK_PATH'],'<br/>');
 
 

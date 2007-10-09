@@ -270,7 +270,7 @@ $l10nEnabled = false;
 #			$theData[$titleCol] = '<b>'.$GLOBALS['LANG']->sL($TCA[$table]['ctrl']['title'],1).'</b> ('.$this->resCount.')';
 			$theUpIcon = '&nbsp;';
 
-#TODO csh
+// todo csh
 #			$theData[$titleCol].= t3lib_BEfunc::cshItem($table,'',$this->backPath,'',FALSE,'margin-bottom:0px; white-space: normal;');
 
 #			$out.=$this->addelement($theUpIcon, $theData, '', '', 'background-color:'.$this->headLineCol.'; border-bottom:1px solid #000');
