@@ -80,21 +80,69 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			$this->doc->backPath = $BACK_PATH;
 			$this->doc->form='<form action="" method="post">';
 
-				// JavaScript
-			$this->doc->JScode = '
-				<script language="javascript" type="text/javascript">
-					script_ended = 0;
-					function jumpToUrl(URL)	{
-						document.location = URL;
-					}
-				</script>
-			';
+
 			$this->doc->postCode='
 				<script language="javascript" type="text/javascript">
+
+					if (top.content && top.content.nav_frame && top.content.nav_frame.refresh_nav)	{
+						// top.content.nav_frame.refresh_nav();
+					}
+
 					script_ended = 1;
 				</script>
 			';
 
+				// Add JavaScript functions to the page:
+			$this->doc->JScode=$this->doc->wrapScriptTags('
+				function jumpToUrl(URL)	{	//
+					window.location.href = URL;
+					return false;
+				}
+				function jumpExt(URL,anchor)	{	//
+					var anc = anchor?anchor:"";
+					window.location.href = URL+(T3_THIS_LOCATION?"&returnUrl="+T3_THIS_LOCATION:"")+anc;
+					return false;
+				}
+				function jumpSelf(URL)	{	//
+					window.location.href = URL+(T3_RETURN_URL?"&returnUrl="+T3_RETURN_URL:"");
+					return false;
+				}
+
+				function setHighlight(id)	{	//
+					top.fsMod.recentIds["dam_cat"]=id;
+					top.fsMod.navFrameHighlightedID["dam_cat"]="pages"+id+"_"+top.fsMod.currentBank;	// For highlighting
+
+					if (top.content && top.content.nav_frame && top.content.nav_frame.refresh_nav)	{
+						top.content.nav_frame.refresh_nav();
+					}
+				}
+				'.$this->doc->redirectUrls(t3lib_div::getIndpEnv('REQUEST_URI')).'
+				function editRecords(table,idList,addParams,CBflag)	{	//
+					window.location.href="'.$BACK_PATH.'alt_doc.php?returnUrl='.rawurlencode(t3lib_div::getIndpEnv('REQUEST_URI')).
+						'&edit["+table+"]["+idList+"]=edit"+addParams;
+				}
+				function editList(table,idList)	{	//
+					var list="";
+
+						// Checking how many is checked, how many is not
+					var pointer=0;
+					var pos = idList.indexOf(",");
+					while (pos!=-1)	{
+						if (cbValue(table+"|"+idList.substr(pointer,pos-pointer))) {
+							list+=idList.substr(pointer,pos-pointer)+",";
+						}
+						pointer=pos+1;
+						pos = idList.indexOf(",",pointer);
+					}
+					if (cbValue(table+"|"+idList.substr(pointer))) {
+						list+=idList.substr(pointer)+",";
+					}
+
+					return list ? list : idList;
+				}
+
+				if (top.fsMod) top.fsMod.recentIds["dam_cat"] = '.intval($this->id).';
+			');
 
 				// should be done on changes only, but that's not possible (tce_db.php react on 'pages' only)
 			t3lib_BEfunc::getSetUpdateSignal('updatePageTree');
@@ -233,15 +281,6 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 
 			$dblist->generateList();
 
-
-				// JavaScript
-			$this->doc->JScodeArray['redirectUrls'] = $this->doc->redirectUrls(t3lib_div::getIndpEnv('REQUEST_URI'));
-			$this->doc->JScodeArray['jumpExt'] = '
-				function jumpExt(URL,anchor)	{
-					var anc = anchor?anchor:"";
-					document.location = URL+(T3_THIS_LOCATION?"&returnUrl="+T3_THIS_LOCATION:"")+anc;
-				}
-				';
 
 
 			$content.= '<form action="'.$dblist->listURL().'" method="post" name="dblistForm">';

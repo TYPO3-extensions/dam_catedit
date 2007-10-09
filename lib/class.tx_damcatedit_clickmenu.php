@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 1999-2004 Kasper Skaarhoj (kasper@typo3.com)
+*  (c) 1999-2005 Kasper Skaarhoj (kasperYYYY@typo3.com)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -35,7 +35,7 @@
  *
  * If you want to integrate a context menu in your scripts, please see template::getContextMenuCode()
  *
- * $Id: class.tx_damcatedit_clickmenu.php,v 1.1 2004/10/28 07:14:16 cvsrene Exp $
+ * $Id: alt_clickmenu.php 1799 2006-11-17 18:49:15Z mundaun $
  * Revised for TYPO3 3.6 2/2003 by Kasper Skaarhoj
  * XHTML compliant
  *
@@ -132,13 +132,11 @@ class tx_damcatedit_clickMenu {
 
 	var $listFrame=0;			// If set, the calling document should be in the listframe of a frameset.
 	var $alwaysContentFrame=0;	// If true, the "content" frame is always used for reference (when condensed mode is enabled)
-	var $dontDisplayTopFrameCM=0;	// If true, the context sensitive menu will not appear in the top frame, only as a layer.
-
 	var $disabledItems=array();	// Contains list of keywords of items to disable in the menu
-	var $enDisItems=''; 		// command string to en/disable menu items
-
+	var $dontDisplayTopFrameCM=0;	// If true, the context sensitive menu will not appear in the top frame, only as a layer.
 	var $leftIcons=0;			// If true, Show icons on the left.
 	var $extClassArray=array();		// Array of classes to be used for user processing of the menu content. This is for the API of adding items to the menu from outside.
+	var $ajax=0; // enable/disable ajax behavior
 
 		// Internal, dynamic:
 	var $elCount=0;				// Counter for elements in the menu. Used to number the name / id of the mouse-over icon.
@@ -163,15 +161,28 @@ class tx_damcatedit_clickMenu {
 			// Setting GPvars:
 		$this->cmLevel = intval(t3lib_div::_GP('cmLevel'));
 		$this->CB = t3lib_div::_GP('CB');
+		if(t3lib_div::_GP('ajax'))	{
+			$this->ajax = 1;
+			ini_set('display_errors',0);	// XML has to be parsed, no parse errors allowed
+		}
 
-
+			// Deal with Drag&Drop context menus
+		if (strcmp(t3lib_div::_GP('dragDrop'),''))	{
+			$CMcontent = $this->printDragDropClickMenu(t3lib_div::_GP('dragDrop'),t3lib_div::_GP('srcId'),t3lib_div::_GP('dstId'));
+			return $CMcontent;
+		}
+		
 			// Explode the incoming command:
 		$params = tx_damcatedit_div::decodePipeParams($item);
 
-
 			// Setting flags:
+		if ($params['listFr'])	$this->listFrame = true;
 		if ($params['listFrame'])	$this->listFrame = true;
-		if ($GLOBALS['BE_USER']->uc['condensedMode']) $this->alwaysContentFrame = true;
+		if ($GLOBALS['BE_USER']->uc['condensedMode'] || $params['listFrame']==2) $this->alwaysContentFrame = true;
+		if (strcmp($params['uid'],''))	$this->isDBmenu=1;
+		
+// workaround - will force returnUrl be be set from the current listframe
+$this->listFrame = false;
 
 		if (strcmp($params['uid'],''))	{
 			$this->isDBmenu = true;
@@ -201,7 +212,7 @@ class tx_damcatedit_clickMenu {
 			}
 		}
 
-			// Return clickmenu conten:
+			// Return clickmenu content:
 		return $CMcontent;
 	}
 
@@ -211,7 +222,11 @@ class tx_damcatedit_clickMenu {
 	 * @return	boolean
 	 */
 	function doDisplayTopFrameCM()	{
+		if($this->ajax)	{
+			return false;
+		} else {
 		return !$GLOBALS['SOBE']->doc->isCMlayers() || !$this->dontDisplayTopFrameCM;
+	}
 	}
 
 
@@ -242,7 +257,7 @@ class tx_damcatedit_clickMenu {
 		global $TCA, $BE_USER;
 
 			// Get record:
-		$this->rec = t3lib_BEfunc::getRecord($table,$uid);
+		$this->rec = t3lib_BEfunc::getRecordWSOL($table,$uid);
 		$menuItems=array();
 		$root=0;
 		###if ($table=='pages' && !strcmp($uid,'0'))	{	// Rootlevel
@@ -331,7 +346,7 @@ class tx_damcatedit_clickMenu {
 		global $TCA, $BE_USER;
 
 			// Setting internal record to the table/uid :
-		$this->rec = t3lib_BEfunc::getRecord($table,$uid);
+		$this->rec = t3lib_BEfunc::getRecordWSOL($table,$uid);
 		$menuItems=array();
 		$root=0;
 		if ($table=='pages' && !strcmp($uid,'0'))	{	// Rootlevel
@@ -395,11 +410,12 @@ class tx_damcatedit_clickMenu {
 	 * @param	string		The URL relative to TYPO3_mainDir
 	 * @param	string		The return_url-parameter
 	 * @param	boolean		If set, the "hideCM()" will be called
+	 * @param	string		If set, gives alternative location to load in (for example top frame or somewhere else)
 	 * @return	string		JavaScript for an onClick event.
 	 */
-	function urlRefForCM($url,$retUrl='',$hideCM=1)	{
+	function urlRefForCM($url,$retUrl='',$hideCM=1,$overrideLoc='')	{
 		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$editOnClick='var docRef=(top.content.list_frame)?top.content.list_frame:'.$loc.'; docRef.document.location=top.TS.PATH_typo3+\''.$url.'\''.
+		$editOnClick= ($overrideLoc ? 'var docRef='.$overrideLoc : 'var docRef=(top.content.list_frame)?top.content.list_frame:'.$loc).'; docRef.location.href=top.TS.PATH_typo3+\''.$url.'\''.
 			($retUrl?"+'&".$retUrl."='+top.rawurlencode(".$this->frameLocation('docRef.document').')':'').';'.
 			($hideCM?'return hideCM();':'');
 		return $editOnClick;
@@ -446,8 +462,12 @@ class tx_damcatedit_clickMenu {
 	function DB_paste($table,$uid,$type,$elInfo)	{
 		$editOnClick = '';
 		$loc = 'top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$conf = $loc.' && confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.'.($elInfo[2]=='copy'?'copy':'move').'_'.$type),$elInfo[0],$elInfo[1])).')';
-		$editOnClick = 'if('.$conf.'){'.$loc.'.document.location=top.TS.PATH_typo3+\''.$this->clipObj->pasteUrl($table,$uid,0).'&redirect=\'+top.rawurlencode('.$this->frameLocation($loc.'.document').'); hideCM();}';
+		if($GLOBALS['BE_USER']->jsConfirmation(2))	{
+		$conf = $loc.' && confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.'.($elInfo[2]=='copy'?'copy':'move').'_'.$type),$elInfo[0],$elInfo[1])).')';
+		} else {
+			$conf = $loc;
+		}
+		$editOnClick = 'if('.$conf.'){'.$loc.'.location.href=top.TS.PATH_typo3+\''.$this->clipObj->pasteUrl($table,$uid,0).'&redirect=\'+top.rawurlencode('.$this->frameLocation($loc.'.document').'); hideCM();}';
 
 		return $this->linkItem(
 			$this->label('paste'.$type),
@@ -596,11 +616,23 @@ class tx_damcatedit_clickMenu {
 	 * @param	integer		page uid to edit (PID)
 	 * @return	array		Item array, element in $menuItems
 	 * @internal
+	 * @deprecated		Use DB_editPageProperties instead
 	 */
 	function DB_editPageHeader($uid)	{
+		return $this->DB_editPageProperties($uid);
+	}
+
+	/**
+	 * Adding CM element for edit page properties
+	 *
+	 * @param	integer		page uid to edit (PID)
+	 * @return	array		Item array, element in $menuItems
+	 * @internal
+	 */
+	function DB_editPageProperties($uid)	{
 		$url = 'alt_doc.php?edit[pages]['.$uid.']=edit';
 		return $this->linkItem(
-			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->getLL('CM_editPageHeader')),
+			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->getLL('CM_editPageProperties')),
 			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/edit2.gif','width="11" height="12"').' alt="" />'),
 			$this->urlRefForCM($url,'returnUrl'),
 			1	// no top frame CM!
@@ -638,31 +670,30 @@ class tx_damcatedit_clickMenu {
 	function DB_new($table,$uid,$pid)	{
 		$editOnClick='';
 		$loc='top.content'.(!$this->alwaysContentFrame?'.list_frame':'');
-		$editOnClick='if('.$loc.'){'.$loc.".document.location=top.TS.PATH_typo3+'".
+		$editOnClick='if('.$loc.'){'.$loc.".location.href=top.TS.PATH_typo3+'".
 			($this->listFrame?
 				"alt_doc.php?returnUrl='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'&edit[".$table."][-".$uid."]=new&defVals[".$table."][parent_id]=".$uid."&defVals[".$table."][pid]=".$this->id."'":	// $this-id does not exist
 				###t3lib_extMgm::extRelPath('dam_catedit').'mod1/index.php?id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new\'').
-				t3lib_extMgm::extRelPath('dam_catedit').'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new&defVals['.$table.'][parent_id]='.$uid."&defVals[".$table."][pid]=".$this->id."'").
+				t3lib_extMgm::extRelPath('dam_catedit').'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&returnUrl=\'+top.rawurlencode('.$this->frameLocation($loc.'.document').')+\'&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new&defVals['.$table.'][parent_id]='.$uid."&defVals[".$table."][pid]=".$this->id."'").
 			';}';
 
 		return $this->linkItem(
 ###			$this->label('new'),
-			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:dam_catedit/locallang_cm.xml:tx_damcatedit_cm1.newSubCat',1)),
+			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:dam_catedit/locallang_cm.php:tx_damcatedit_cm1.newSubCat',1)),
 			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/new_'.($table=='pages'&&$this->listFrame?'page':'el').'.gif','width="'.($table=='pages'?'13':'11').'" height="12"').' alt="" />'),
 			$editOnClick.'return hideCM();'
 		);
-
-
-
-
 	}
+
+
+
 
 	/**
 	 * Adding CM element for Delete
 	 *
 	 * @param	string		Table name
 	 * @param	integer		UID for the current record.
-	 * @param	array		Label for including in the confirmation message, EXT:lang/locallang_core.xml:mess.delete
+	 * @param	array		Label for including in the confirmation message, EXT:lang/locallang_core.php:mess.delete
 	 * @return	array		Item array, element in $menuItems
 	 * @internal
 	 */
@@ -671,7 +702,7 @@ class tx_damcatedit_clickMenu {
 		#$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
 		// workaround: reload of frameset will jump to another submodule when that was called before the current submodule
 		$loc='top.content.nav_frame';
-		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$elInfo[0])).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
+		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.delete'),$elInfo[0])).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
 			"&cmd[".$table.']['.$uid.'][delete]=1&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
 
 		return $this->linkItem(
@@ -707,9 +738,8 @@ class tx_damcatedit_clickMenu {
 	function DB_tempMountPoint($page_id)	{
 		return $this->linkItem(
 			$this->label('tempMountPoint'),
-			#$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/___.gif','width="12" height="12"').' alt="" />'),
-			'',
-			"if (top.content.nav_frame) { top.content.nav_frame.document.location = 'alt_db_navframe.php?setTempDBmount=".intval($page_id)."'; } return hideCM();"
+			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/placeasroot.gif','width="14" height="12"').' alt="" />'),
+			"if (top.content.nav_frame) { top.content.nav_frame.location.href = 'alt_db_navframe.php?setTempDBmount=".intval($page_id)."'; } return hideCM();"
 		);
 	}
 
@@ -738,10 +768,10 @@ class tx_damcatedit_clickMenu {
 	 * @return	array		Item array, element in $menuItems
 	 */
 	function DB_changeFlag($table, $rec, $flagField, $title, $name, $iconRelPath='gfx/')    {
-		$uid=$rec['uid'];
+	    $uid = $rec['_ORIG_uid'] ? $rec['_ORIG_uid'] : $rec['uid'];
 		$editOnClick='';
 		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$editOnClick='if('.$loc.'){'.$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
+	    $editOnClick='if('.$loc.'){'.$loc.".location.href=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
 			"&data[".$table.']['.$uid.']['.$flagField.']='.($rec[$flagField]?0:1).'&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
 
 		return $this->linkItem(
@@ -852,7 +882,7 @@ class tx_damcatedit_clickMenu {
 	function FILE_launch($path,$script,$type,$image)	{
 		$loc='top.content'.(!$this->alwaysContentFrame?'.list_frame':'');
 
-		$editOnClick='if('.$loc.'){'.$loc.".document.location=top.TS.PATH_typo3+'".$script.'?target='.rawurlencode($path)."&returnUrl='+top.rawurlencode(".$this->frameLocation($loc.'.document').");}";
+		$editOnClick='if('.$loc.'){'.$loc.".location.href=top.TS.PATH_typo3+'".$script.'?target='.rawurlencode($path)."&returnUrl='+top.rawurlencode(".$this->frameLocation($loc.'.document').");}";
 
 		return $this->linkItem(
 			$this->label($type),
@@ -898,7 +928,12 @@ class tx_damcatedit_clickMenu {
 	function FILE_delete($path)	{
 		$editOnClick='';
 		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),basename($path))).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_file.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
+		if($GLOBALS['BE_USER']->jsConfirmation(4))	{
+			$conf = "confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.delete'),basename($path)).t3lib_BEfunc::referenceCount('_FILE',$path,' (There are %s reference(s) to this file!)')).")";
+		} else {
+			$conf = '1==1';
+		}
+		$editOnClick='if('.$loc." && ".$conf." ){".$loc.".location.href=top.TS.PATH_typo3+'tce_file.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
 			"&file[delete][0][data]=".rawurlencode($path).'&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
 
 		return $this->linkItem(
@@ -920,8 +955,13 @@ class tx_damcatedit_clickMenu {
 	function FILE_paste($path,$target,$elInfo)	{
 		$editOnClick='';
 		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
-		$conf=$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.'.($elInfo[2]=='copy'?'copy':'move').'_into'),$elInfo[0],$elInfo[1])).")";
-		$editOnClick='if('.$conf.'){'.$loc.".document.location=top.TS.PATH_typo3+'".$this->clipObj->pasteUrl('_FILE',$path,0).
+		if($GLOBALS['BE_USER']->jsConfirmation(2))	{
+		$conf=$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.'.($elInfo[2]=='copy'?'copy':'move').'_into'),$elInfo[0],$elInfo[1])).")";
+		} else {
+			$conf=$loc;
+		}
+
+		$editOnClick='if('.$conf.'){'.$loc.".location.href=top.TS.PATH_typo3+'".$this->clipObj->pasteUrl('_FILE',$path,0).
 			"&redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').'); hideCM();}';
 
 		return $this->linkItem(
@@ -932,6 +972,123 @@ class tx_damcatedit_clickMenu {
 	}
 
 
+
+
+
+
+
+
+
+
+	/***************************************
+	 *
+	 * DRAG AND DROP
+	 *
+	 ***************************************/
+
+	/**
+	 * Make 1st level clickmenu:
+	 *
+	 * @param	string		The absolute path
+	 * @param	integer		UID for the current record.
+	 * @param	integer		Destination ID
+	 * @return	string		HTML content
+	 */
+	function printDragDropClickMenu($table,$srcId,$dstId)	{
+		$menuItems=array();
+
+			// If the drag and drop menu should apply to PAGES use this set of menu items
+		if ($table == 'pages')	{
+				// Move Into:
+			$menuItems['movePage_into']=$this->dragDrop_copymovepage($srcId,$dstId,'move','into');
+				// Move After:
+			$menuItems['movePage_after']=$this->dragDrop_copymovepage($srcId,$dstId,'move','after');
+				// Copy Into:
+			$menuItems['copyPage_into']=$this->dragDrop_copymovepage($srcId,$dstId,'copy','into');
+				// Copy After:
+			$menuItems['copyPage_after']=$this->dragDrop_copymovepage($srcId,$dstId,'copy','after');
+		}
+
+			// If the drag and drop menu should apply to FOLDERS use this set of menu items
+		if ($table == 'folders')	{
+				// Move Into:
+			$menuItems['moveFolder_into']=$this->dragDrop_copymovefolder($srcId,$dstId,'move');
+				// Copy Into:
+			$menuItems['copyFolder_into']=$this->dragDrop_copymovefolder($srcId,$dstId,'copy');
+		}
+
+			// Adding external elements to the menuItems array
+		$menuItems = $this->processingByExtClassArray($menuItems,"dragDrop_".$table,$srcId);  // to extend this, you need to apply a Context Menu to a "virtual" table called "dragDrop_pages" or similar
+
+			// Processing by external functions?
+		$menuItems = $this->externalProcessingOfDBMenuItems($menuItems);
+
+			// Return the printed elements:
+		return $this->printItems($menuItems,
+			t3lib_iconWorks::getIconImage($table,$this->rec,$this->PH_backPath,' class="absmiddle" title="'.htmlspecialchars(t3lib_BEfunc::getRecordIconAltText($this->rec,$table)).'"').t3lib_BEfunc::getRecordTitle($table,$this->rec,1)
+		);
+	}
+
+
+	/**
+	 * Processing the $menuItems array (for extension classes) (DRAG'N DROP)
+	 *
+	 * @param	array		$menuItems array for manipulation.
+	 * @return	array		Processed $menuItems array
+	 */
+	function externalProcessingOfDragDropMenuItems($menuItems)	{
+		return $menuItems;
+	}
+
+
+	/**
+	 * Adding CM element for Copying/Moving a Page Into/After from a drag & drop action
+	 *
+	 * @param	integer		source UID code for the record to modify
+	 * @param	integer		destination UID code for the record to modify
+	 * @param	string		Action code: either "move" or "copy"
+	 * @param	string		Parameter code: either "into" or "after"
+	 * @return	array		Item array, element in $menuItems
+	 * @internal
+	 */
+	function dragDrop_copymovepage($srcUid,$dstUid,$action,$into)	{
+		$negativeSign = ($into == 'into') ? '' : '-';
+		$editOnClick='';
+		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
+		$editOnClick='if('.$loc.'){'.$loc.'.document.location=top.TS.PATH_typo3+"tce_db.php?redirect="+top.rawurlencode('.$this->frameLocation($loc.'.document').')+"'.
+			'&cmd[pages]['.$srcUid.']['.$action.']='.$negativeSign.$dstUid.'&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode().'";hideCM();}';
+
+		return $this->linkItem(
+			$this->label($action.'Page_'.$into),
+			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/'.$action.'_page_'.$into.'.gif','width="11" height="12"').' alt="" />'),
+			$editOnClick.'return false;',
+			0
+		);
+	}
+
+
+	/**
+	 * Adding CM element for Copying/Moving a Folder Into from a drag & drop action
+	 *
+	 * @param	string		source path for the record to modify
+	 * @param	string		destination path for the records to modify
+	 * @param	string		Action code: either "move" or "copy"
+	 * @return	array		Item array, element in $menuItems
+	 * @internal
+	 */
+	function dragDrop_copymovefolder($srcPath,$dstPath,$action)	{
+		$editOnClick='';
+		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
+		$editOnClick='if('.$loc.'){'.$loc.'.document.location=top.TS.PATH_typo3+"tce_file.php?redirect="+top.rawurlencode('.$this->frameLocation($loc.'.document').')+"'.
+			'&file['.$action.'][0][data]='.$srcPath.'&file['.$action.'][0][target]='.$dstPath.'&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode().'";hideCM();}';
+
+		return $this->linkItem(
+			$this->label($action.'Folder_into'),
+			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/'.$action.'_folder_into.gif','width="11" height="12"').' alt="" />'),
+			$editOnClick.'return false;',
+			0
+		);
+	}
 
 
 
@@ -1026,7 +1183,10 @@ class tx_damcatedit_clickMenu {
 
 				// Set back path place holder to real back path
 			$CMtable = str_replace($this->PH_backPath,$this->backPath,$CMtable);
-
+			if ($this->ajax)	{
+				$innerXML = '<data><clickmenu><htmltable><![CDATA['.$CMtable.']]></htmltable><cmlevel>'.$this->cmLevel.'</cmlevel></clickmenu></data>';
+				return $innerXML;
+			} else {
 				// Create JavaScript section:
 			$script=$GLOBALS['TBE_TEMPLATE']->wrapScriptTags('
 
@@ -1035,9 +1195,9 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 }
 '.(!$this->doDisplayTopFrameCM()?'hideCM();':'')
 );
-		}
-
 		return $script;
+	}
+		}
 	}
 
 	/**
@@ -1103,8 +1263,12 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 				$onClick=eregi_replace('hideCM\(\);','',$onClick);
 				if (!$i[5])	$onClick.='hideEmpty();';
 
+				if ($GLOBALS['TYPO3_CONF_VARS']['BE']['useOnContextMenuHandler'])   {
+					$CSM = ' oncontextmenu="'.htmlspecialchars($onClick).';return false;"';
+				}
+
 				$out[]='
-					<tr class="typo3-CSM-itemRow" onclick="'.htmlspecialchars($onClick).'" onmouseover="this.bgColor=\''.$GLOBALS['TBE_TEMPLATE']->bgColor5.'\';" onmouseout="this.bgColor=\'\';">
+					<tr class="typo3-CSM-itemRow" onclick="'.htmlspecialchars($onClick).'" onmouseover="this.bgColor=\''.$GLOBALS['TBE_TEMPLATE']->bgColor5.'\';" onmouseout="this.bgColor=\'\';"'.$CSM.'>
 						'.(!$this->leftIcons?'<td class="typo3-CSM-item">'.$i[1].'</td><td align="center">'.$i[2].'</td>' : '<td align="center">'.$i[2].'</td><td class="typo3-CSM-item">'.$i[1].'</td>').'
 					</tr>';
 			}
@@ -1201,6 +1365,9 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 		global $BACK_PATH;
 
 		$this->elCount++;
+		if($this->ajax)	{
+			$onClick = str_replace('top.loadTopMenu', 'showClickmenu_raw', $onClick);
+		}
 
 		$WHattribs = t3lib_iconWorks::skinImg($BACK_PATH,'gfx/content_client.gif','width="7" height="10"',2);
 
@@ -1308,13 +1475,13 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 	}
 
 	/**
-	 * Get label from locallang_core.xml:cm.*
+	 * Get label from locallang_core.php:cm.*
 	 *
 	 * @param	string		The "cm."-suffix to get.
 	 * @return	string
 	 */
 	function label($label)	{
-		return $GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.'.$label,1));
+		return $GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.'.$label,1));
 	}
 
 	/**
@@ -1323,7 +1490,11 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 	 * @return	boolean
 	 */
 	function isCMlayers()	{
+		if($this->ajax)	{
+			return !$this->CB;
+		} else {
 		return $GLOBALS['SOBE']->doc->isCMlayers() && !$this->CB;
+	}
 	}
 
 	/**

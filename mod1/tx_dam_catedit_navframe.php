@@ -99,52 +99,55 @@ class tx_damcatedit_navframe {
 
 		$this->doc->JScode='';
 
+
 			// Setting JavaScript for menu.
 		$this->doc->JScode=$this->doc->wrapScriptTags(
 			($this->currentSubScript?'top.currentSubScript=unescape("'.rawurlencode($this->currentSubScript).'");':'').'
 
-			function jumpTo(params,linkObj,highLightID)	{
-				var theUrl = top.TS.PATH_typo3+top.currentSubScript+"?"+params;
-
+				// Function, loading the list frame from navigation tree:
+			function jumpTo(id,linkObj,highLightID,bank)	{	//
+				var theUrl = top.TS.PATH_typo3+top.currentSubScript+"?id="+id;
+				top.fsMod.currentBank = bank;
+		
 				if (top.condensedMode)	{
-					top.content.document.location=theUrl;
+					top.content.location.href=theUrl;
 				} else {
-					parent.list_frame.document.location=theUrl;
+					parent.list_frame.location.href=theUrl;
 				}
-				'.($this->doHighlight?'hilight_row("row"+top.fsMod.recentIds["txdamM1"],highLightID);':'').'
+		
+				'.($this->doHighlight?'hilight_row("dam_cat",highLightID+"_"+bank);':'').'
+		
 				'.(!$GLOBALS['CLIENT']['FORMSTYLE'] ? '' : 'if (linkObj) {linkObj.blur();}').'
 				return false;
 			}
-
-
+		
 				// Call this function, refresh_nav(), from another script in the backend if you want to refresh the navigation frame (eg. after having changed a page title or moved pages etc.)
 				// See t3lib_BEfunc::getSetUpdateSignal()
-			function refresh_nav()	{
+			function refresh_nav()	{	//
 				window.setTimeout("_refresh_nav();",0);
 			}
-
-
-			function _refresh_nav()	{
-				document.location="'.htmlspecialchars(t3lib_div::getIndpEnv('SCRIPT_NAME').'?unique='.time()).'";
+			function _refresh_nav()	{	//
+				window.location.href="'.htmlspecialchars(t3lib_div::getIndpEnv('SCRIPT_NAME').'?unique='.time()).'";
 			}
-
+		
 				// Highlighting rows in the page tree:
 			function hilight_row(frameSetModule,highLightID) {	//
-
+		
 					// Remove old:
 				theObj = document.getElementById(top.fsMod.navFrameHighlightedID[frameSetModule]);
 				if (theObj)	{
-					theObj.style.backgroundColor="";
+					theObj.className = "";
 				}
-
+		
 					// Set new:
 				top.fsMod.navFrameHighlightedID[frameSetModule] = highLightID;
 				theObj = document.getElementById(highLightID);
 				if (theObj)	{
-					theObj.style.backgroundColor="'.t3lib_div::modifyHTMLColorAll($this->doc->bgColor,-20).'";
+					theObj.className = "navFrameHL";
 				}
 			}
 		');
+
 
 		$CMparts=$this->doc->getContextMenuCode();
 		$this->doc->bodyTagAdditions = $CMparts[1];
@@ -219,7 +222,7 @@ class tx_damcatedit_navframe {
 
 			// Adding highlight - JavaScript
 		if ($this->doHighlight)	$this->content .=$this->doc->wrapScriptTags('
-			hilight_row("",top.fsMod.navFrameHighlightedID["web"]);
+			hilight_row("",top.fsMod.navFrameHighlightedID["dam_cat"]);
 		');
 	}
 
