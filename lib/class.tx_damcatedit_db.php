@@ -217,11 +217,11 @@ class tx_damcatedit_db {
 		$fields = $fields?$fields:$this->fieldList;
 
 		$rows = array();
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, 'uid IN ('.$uids.')'.$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''));
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, $this->table.'.uid IN ('.$uids.')'.$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''));
 		if(!$res) echo $GLOBALS['TYPO3_DB']->sql_error();
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
-			$rows[$row['uid']]=$row;
-		}
+
+		if($this->resReturn) return $res;
+
 		return $rows;
 	}
 

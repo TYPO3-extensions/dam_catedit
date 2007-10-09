@@ -596,11 +596,11 @@ $LOISmode=false;
 //					$cells[]='<a href="#" onclick="if (confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$title)).')) {jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');} return false;"><img src="'.$this->backPath.'gfx/delete_record.gif" width="12" height="12" border="0" align="top" title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" /></a>';
 //				}
 
-$quickDelete = false;
+$quickDelete = true;
 
 					// "Delete" link:
 				if ($quickDelete AND  ( ($table=='pages' && ($localCalcPerms&4)) || ($table!='pages' && ($this->calcPerms&16)) && in_array('delRec',$shEl) ) )	{
-					$params = '&cmd[tx_dam]['.$row['uid'].'][delete]=1';
+					$params = '&cmd[tx_dam_cat]['.$row['uid'].'][delete]=1';
 					$title = $row['title'].' ('.$row['file_name'].')';
 					$onClick = 'if (confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$title)).')) {jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');} return false;';
 					$cells[] = '<a href="#" onclick="'.$onClick.'">'.
@@ -624,7 +624,7 @@ $quickDelete = false;
 			// If the record is edit-locked	by another user, we will show a little warning sign:
 		if ($lockInfo=t3lib_BEfunc::isRecordLocked($table,$row['uid']))	{
 			$cells[]='<a href="#" onclick="'.htmlspecialchars('alert('.$LANG->JScharCode($lockInfo['msg']).');return false;').'">'.
-					'<img'.t3lib_iconWorks::skinImg('','gfx/recordlock_warning3.gif','width="17" height="12"').' title="'.htmlspecialchars($lockInfo['msg']).'" alt="" />'.
+					'<img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/recordlock_warning3.gif','width="17" height="12"').' title="'.htmlspecialchars($lockInfo['msg']).'" alt="" />'.
 					'</a>';
 		}
 

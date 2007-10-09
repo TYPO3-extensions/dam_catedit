@@ -666,7 +666,9 @@ class tx_damcatedit_clickMenu {
 	 */
 	function DB_delete($table,$uid,$elInfo)	{
 		$editOnClick='';
-		$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
+		#$loc='top.content'.($this->listFrame && !$this->alwaysContentFrame ?'.list_frame':'');
+		// workaround: reload of frameset will jump to another submodule when that was called before the current submodule
+		$loc='top.content.nav_frame';
 		$editOnClick='if('.$loc." && confirm(".$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$elInfo[0])).")){".$loc.".document.location=top.TS.PATH_typo3+'tce_db.php?redirect='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'".
 			"&cmd[".$table.']['.$uid.'][delete]=1&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode()."';hideCM();}";
 
@@ -1330,6 +1332,7 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 	 */
 	function frameLocation($str)	{
 		return $str.'.location';
+		#return $str.'.URL';
 	}
 }
 

@@ -52,6 +52,7 @@ require_once(t3lib_extmgm::extPath('dam_catedit').'class.tx_dam_db_list2.php');
 require_once(PATH_txdam.'lib/class.tx_dam_sysfolder.php');
 require_once(t3lib_extmgm::extPath('dam_catedit').'lib/class.tx_damcatedit_db.php');
 
+require_once(PATH_txdam.'lib/class.tx_dam_browsetrees.php');
 
 
 class tx_damcatedit_module1 extends tx_dam_SCbase {
@@ -158,73 +159,95 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			$uid = intval(key($cmd['SELECT']['txdamCat']));
 		}
 
-
-			$treedb = t3lib_div::makeInstance('tx_damcatedit_db');
-			$treedb->init('tx_dam_cat', 'parent_id');
-			$treedb->setPidList($this->id);
-
-			$this->selection->pointer->setTotalCount($treedb->countSubRecords($uid));
-
-			if($this->selection->pointer->countTotal) {
+		$treedb = t3lib_div::makeInstance('tx_damcatedit_db');
+		$treedb->init('tx_dam_cat', 'parent_id');
+		$treedb->setPidList($this->id);
+		$treedb->where_default .= ' AND sys_language_uid=0';
 
 
-				$dblist = t3lib_div::makeInstance('tx_dam_db_list');
-				$dblist->init('tx_dam_cat');
+		if ($uid OR $GLOBALS['BE_USER']->isAdmin()) {
+			$recCount = $treedb->countSubRecords($uid);
+		} else {
 
-				$dblist->backPath = $BACK_PATH;
-				$dblist->returnURL = t3lib_div::linkThisScript(array('SLCMD[SELECT][txdamCat]['.$uid.']'=>'1'));
-				$dblist->staticParams = '&SLCMD[SELECT][txdamCat]['.$uid.']=1';
-				$dblist->calcPerms = $BE_USER->calcPerms($this->pageinfo);
-				$dblist->alternateBgColors=$this->modTSconfig['properties']['alternateBgColors']?1:0;
-				$dblist->thumbs = false;
+				// the trees
+			$browseTrees = t3lib_div::makeInstance('tx_dam_browseTrees');
+				// show only categories:
+			$selClass = array('txdamCat' => $TYPO3_CONF_VARS['EXTCONF']['dam']['selectionClasses']['txdamCat']);
+			$browseTrees->initSelectionClasses($selClass, 'tx_dam_catedit_navframe.php');
 
-				$dblist->pointer = $this->selection->pointer;
-
-				$dblist->searchString = trim(t3lib_div::_GP('search_field'));
-				$dblist->sortField = t3lib_div::_GP('sortField');
-				$dblist->sortRev = t3lib_div::_GP('sortRev');
+			$mounts = $browseTrees->getMountsForTreeClass('txdamCat');
+			$recCount = count($mounts);
+		}
 
 
-				$dblist->setDispFields();
-				#		$fieldList	= 'tx_dam_cat.'.implode(',tx_dam_cat.',t3lib_div::trimExplode(',',$dblist->setFields['tx_dam_cat'],1));
-				#		$this->selection->qg->query['FROM']['tx_dam_cat']=$fieldList;
+		$this->selection->pointer->setTotalCount($recCount);
 
-				$orderBy = ($TCA['tx_dam_cat']['ctrl']['sortby']) ? 'tx_dam_cat.'.$TCA['tx_dam_cat']['ctrl']['sortby'] : 'tx_dam_cat.sorting';
+		if($this->selection->pointer->countTotal) {
 
-				if ($dblist->sortField)	{
-					if (in_array($dblist->sortField,$dblist->makeFieldList('tx_dam_cat',1)))	{
-						$orderBy = 'tx_dam_cat.'.$dblist->sortField;
-						if ($dblist->sortRev)	$orderBy.=' DESC';
-					}
+
+			$dblist = t3lib_div::makeInstance('tx_dam_db_list');
+			$dblist->init('tx_dam_cat');
+
+			$dblist->backPath = $BACK_PATH;
+			$dblist->returnURL = t3lib_div::linkThisScript(array('SLCMD[SELECT][txdamCat]['.$uid.']'=>'1'));
+			$dblist->staticParams = '&SLCMD[SELECT][txdamCat]['.$uid.']=1';
+			$dblist->calcPerms = $BE_USER->calcPerms($this->pageinfo);
+			$dblist->alternateBgColors=$this->modTSconfig['properties']['alternateBgColors']?1:0;
+			$dblist->thumbs = false;
+
+			$dblist->pointer = $this->selection->pointer;
+
+			$dblist->searchString = trim(t3lib_div::_GP('search_field'));
+			$dblist->sortField = t3lib_div::_GP('sortField');
+			$dblist->sortRev = t3lib_div::_GP('sortRev');
+
+
+			$dblist->setDispFields();
+			#		$fieldList	= 'tx_dam_cat.'.implode(',tx_dam_cat.',t3lib_div::trimExplode(',',$dblist->setFields['tx_dam_cat'],1));
+			#		$this->selection->qg->query['FROM']['tx_dam_cat']=$fieldList;
+
+			$orderBy = ($TCA['tx_dam_cat']['ctrl']['sortby']) ? 'tx_dam_cat.'.$TCA['tx_dam_cat']['ctrl']['sortby'] : 'tx_dam_cat.sorting';
+
+			if ($dblist->sortField)	{
+				if (in_array($dblist->sortField,$dblist->makeFieldList('tx_dam_cat',1)))	{
+					$orderBy = 'tx_dam_cat.'.$dblist->sortField;
+					if ($dblist->sortRev)	$orderBy.=' DESC';
 				}
+			}
 
-				$treedb->setResReturn(true);
-				$treedb->setSortFields($orderBy);
+			$treedb->setResReturn(true);
+			$treedb->setSortFields($orderBy);
+
+			if ($uid OR $GLOBALS['BE_USER']->isAdmin()) {
 				$dblist->res = $treedb->getSubRecords($uid, 'tx_dam_cat.*');
+			} else {
+				$uids = implode(',',$mounts);
+				$dblist->res = $treedb->getRecords ($uids, 'tx_dam_cat.*');
+			}
 
 
 
 	#TODO ???				// It is set, if the clickmenu-layer is active AND the extended view is not enabled.
-#				$dblist->dontShowClipControlPanels = $CLIENT['FORMSTYLE'] && !$BE_USER->uc['disableCMlayers'];
+#			$dblist->dontShowClipControlPanels = $CLIENT['FORMSTYLE'] && !$BE_USER->uc['disableCMlayers'];
 
-				$dblist->generateList();
-
-
-					// JavaScript
-				$this->doc->JScodeArray['redirectUrls'] = $this->doc->redirectUrls(t3lib_div::getIndpEnv('REQUEST_URI'));
-				$this->doc->JScodeArray['jumpExt'] = '
-					function jumpExt(URL,anchor)	{
-						var anc = anchor?anchor:"";
-						document.location = URL+(T3_THIS_LOCATION?"&returnUrl="+T3_THIS_LOCATION:"")+anc;
-					}
-					';
+			$dblist->generateList();
 
 
-				$content.= '<form action="'.$dblist->listURL().'" method="post" name="dblistForm">';
-				$content.= $dblist->HTMLcode;
-				$content.= '<input type="hidden" name="cmd_table"><input type="hidden" name="cmd"></form>';
-				$content.= $dblist->fieldSelectBox();
-			}
+				// JavaScript
+			$this->doc->JScodeArray['redirectUrls'] = $this->doc->redirectUrls(t3lib_div::getIndpEnv('REQUEST_URI'));
+			$this->doc->JScodeArray['jumpExt'] = '
+				function jumpExt(URL,anchor)	{
+					var anc = anchor?anchor:"";
+					document.location = URL+(T3_THIS_LOCATION?"&returnUrl="+T3_THIS_LOCATION:"")+anc;
+				}
+				';
+
+
+			$content.= '<form action="'.$dblist->listURL().'" method="post" name="dblistForm">';
+			$content.= $dblist->HTMLcode;
+			$content.= '<input type="hidden" name="cmd_table"><input type="hidden" name="cmd"></form>';
+			$content.= $dblist->fieldSelectBox();
+		}
 
 		$this->content.= $content;
 	}
