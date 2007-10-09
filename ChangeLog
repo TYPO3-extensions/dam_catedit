@@ -1,7 +1,14 @@
+06-11-24 Rene Fritz  <r.fritz@colorcube.de>
+
+	* Fix: versioning action link works now
+	* Added: veriCode() to links
+	* Fix: Return to list and reload navframe when new category was created
+
 06-08-31 Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: Workaround added: delete function in navframe jumped to another submodule when that was called before the current submodule
 	* Fix: Delete function in list module works now
+	* Fix: non-admins don't get access to root elements in list module when clicking on the root icon in nav frame
 
 06-05-29 Rene Fritz  <r.fritz@colorcube.de>
 

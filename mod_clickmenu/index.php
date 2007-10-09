@@ -47,13 +47,13 @@
  *
  *
  *
- * 1252: class SC_alt_clickmenu
- * 1271:     function init()
- * 1369:     function main()
- * 1403:     function printContent()
+ *   87: class SC_tx_damcatedit_clickmenu extends t3lib_SCbase
+ *  104:     function init()
+ *  205:     function main()
+ *  239:     function printContent()
  *
- * TOTAL FUNCTIONS: 43
- * (This index is automatically created/updated by the extension "extdeveval")
+ * TOTAL FUNCTIONS: 3
+ * (This index is automatically created/updated by the script "update-class-index")
  *
  */
 
@@ -102,10 +102,11 @@ class SC_tx_damcatedit_clickmenu extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function init()	{
-		global $BE_USER,$BACK_PATH;
+		global $BE_USER,$BACK_PATH, $TYPO3_CONF_VARS;
+		
 
 		parent::init();
-		
+
 			// Setting GPvars:
 		$this->backPath = t3lib_div::_GP('backPath');
 		$this->item = t3lib_div::_GP('item');
@@ -120,7 +121,7 @@ class SC_tx_damcatedit_clickmenu extends t3lib_SCbase {
 		} else {
 			$this->backPath = $BACK_PATH;
 		}
-		
+
 			// Setting internal array of classes for extending the clickmenu:
 		###$this->extClassArray = $GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'];
 		$this->extClassArray = $GLOBALS['TBE_MODULES_EXT']['tx_damcatedit_clickmenu']['extendCMclasses'];
@@ -131,7 +132,7 @@ class SC_tx_damcatedit_clickmenu extends t3lib_SCbase {
 				if ($extClassConf['path'])	$this->include_once[]=$extClassConf['path'];
 			}
 		}
-		
+
 
 			// Initialize template object
 		$this->doc = t3lib_div::makeInstance('template');
@@ -203,6 +204,8 @@ class SC_tx_damcatedit_clickmenu extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function main()	{
+		global $TYPO3_CONF_VARS;
+		
 
 			// Initialize Clipboard object:
 		$clipObj = t3lib_div::makeInstance('t3lib_clipboard');

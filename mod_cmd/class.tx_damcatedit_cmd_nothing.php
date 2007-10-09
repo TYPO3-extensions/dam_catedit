@@ -85,7 +85,7 @@ class tx_damcatedit_cmd_nothing extends t3lib_extobjbase {
 		$content.= '<br /><br />'.$this->pObj->btn_back('',$this->pObj->returnUrl);
 
 
-			// CSH:
+#TODO csh
 #		$content.= t3lib_BEfunc::cshItem('xMOD_csh_corebe', 'file_rename', $GLOBALS['BACK_PATH'],'<br/>');
 
 

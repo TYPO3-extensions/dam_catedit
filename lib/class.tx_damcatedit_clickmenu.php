@@ -70,33 +70,33 @@
  *  616:     function DB_editRecord($table,$uid)
  *  636:     function DB_new($table,$uid,$pid)
  *  667:     function DB_delete($table,$uid,$elInfo)
- *  688:     function DB_view($id,$anchor='')
- *  703:     function DB_tempMountPoint($page_id)
- *  721:     function DB_hideUnhide($table,$rec,$hideField)
- *  736:     function DB_changeFlag($table, $rec, $flagField, $title, $name, $iconRelPath='gfx/')
+ *  690:     function DB_view($id,$anchor='')
+ *  705:     function DB_tempMountPoint($page_id)
+ *  723:     function DB_hideUnhide($table,$rec,$hideField)
+ *  738:     function DB_changeFlag($table, $rec, $flagField, $title, $name, $iconRelPath='gfx/')
  *
  *              SECTION: FILE
- *  770:     function printFileClickMenu($path)
- *  834:     function externalProcessingOfFileMenuItems($menuItems)
- *  848:     function FILE_launch($path,$script,$type,$image)
- *  868:     function FILE_copycut($path,$type)
- *  894:     function FILE_delete($path)
- *  916:     function FILE_paste($path,$target,$elInfo)
+ *  772:     function printFileClickMenu($path)
+ *  836:     function externalProcessingOfFileMenuItems($menuItems)
+ *  850:     function FILE_launch($path,$script,$type,$image)
+ *  870:     function FILE_copycut($path,$type)
+ *  896:     function FILE_delete($path)
+ *  918:     function FILE_paste($path,$target,$elInfo)
  *
  *              SECTION: COMMON
- *  956:     function printItems($menuItems,$item)
- * 1008:     function printLayerJScode($menuItems)
- * 1046:     function wrapColorTableCM($str)
- * 1069:     function menuItemsForTopFrame($menuItems)
- * 1086:     function menuItemsForClickMenu($menuItems)
- * 1120:     function addMenuItems($menuItems,$newMenuItems,$position='')
- * 1196:     function linkItem($str,$icon,$onClick,$onlyCM=0,$dontHide=0)
- * 1222:     function excludeIcon($iconCode)
- * 1232:     function enableDisableItems($menuItems)
- * 1270:     function cleanUpSpacers($menuItems)
- * 1312:     function label($label)
- * 1321:     function isCMlayers()
- * 1331:     function frameLocation($str)
+ *  958:     function printItems($menuItems,$item)
+ * 1010:     function printLayerJScode($menuItems)
+ * 1048:     function wrapColorTableCM($str)
+ * 1071:     function menuItemsForTopFrame($menuItems)
+ * 1088:     function menuItemsForClickMenu($menuItems)
+ * 1122:     function addMenuItems($menuItems,$newMenuItems,$position='')
+ * 1198:     function linkItem($str,$icon,$onClick,$onlyCM=0,$dontHide=0)
+ * 1224:     function excludeIcon($iconCode)
+ * 1234:     function enableDisableItems($menuItems)
+ * 1272:     function cleanUpSpacers($menuItems)
+ * 1314:     function label($label)
+ * 1323:     function isCMlayers()
+ * 1333:     function frameLocation($str)
  *
  * TOTAL FUNCTIONS: 43
  * (This index is automatically created/updated by the script "update-class-index")
@@ -377,6 +377,8 @@ class tx_damcatedit_clickMenu {
 	 * @return	array		Processed $menuItems array
 	 */
 	function processingByExtClassArray($menuItems,$table,$uid)	{
+		global $TYPO3_CONF_VARS;
+		
 		if (is_array($this->extClassArray))	{
 			reset($this->extClassArray);
 			while(list(,$conf)=each($this->extClassArray))	{
@@ -640,7 +642,7 @@ class tx_damcatedit_clickMenu {
 			($this->listFrame?
 				"alt_doc.php?returnUrl='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'&edit[".$table."][-".$uid."]=new&defVals[".$table."][parent_id]=".$uid."&defVals[".$table."][pid]=".$this->id."'":	// $this-id does not exist
 				###t3lib_extMgm::extRelPath('dam_catedit').'mod1/index.php?id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new\'').
-				t3lib_extMgm::extRelPath('dam_catedit').'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new&defVals['.$table.'][parent_id]='.$uid."&defVals[".$table."][pid]=".$this->id."'").
+				t3lib_extMgm::extRelPath('dam_catedit').'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new&defVals['.$table.'][parent_id]='.$uid."&defVals[".$table."][pid]=".$this->id."'").
 			';}';
 
 		return $this->linkItem(

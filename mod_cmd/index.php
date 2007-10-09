@@ -30,7 +30,22 @@
  */
 /**
  * [CLASS/FUNCTION INDEX of SCRIPT]
-
+ *
+ *
+ *
+ *   76: class tx_damcatedit_mod_cmd extends t3lib_SCbase
+ *  100:     function init()
+ *  139:     function handleExternalFunctionValue($MM_key='function', $MS_value=NULL)
+ *  170:     function main()
+ *  270:     function jumpToUrl(URL)
+ *  274:     function jumpBack()
+ *  318:     function printContent()
+ *  330:     function wrongCommandMessage()
+ *  345:     function redirect()
+ *  364:     function btn_back($params=array(), $absUrl='')
+ *
+ * TOTAL FUNCTIONS: 9
+ * (This index is automatically created/updated by the script "update-class-index")
  *
  */
 
@@ -84,14 +99,12 @@ class tx_damcatedit_mod_cmd extends t3lib_SCbase {
 	 */
 	function init()	{
 		global $BE_USER, $TYPO3_CONF_VARS, $FILEMOUNTS;
-$TYPO3_CONF_VARS['SYS']['doNotCheckReferer']=1;
-// TODO veriCode used/working?
-		$this->vC = t3lib_div::_GP('vC');
 
 			// Checking referer / executing
 		$refInfo=parse_url(t3lib_div::getIndpEnv('HTTP_REFERER'));
+		$vC = t3lib_div::_GP('vC');
 		$httpHost = t3lib_div::getIndpEnv('TYPO3_HOST_ONLY');
-		if ($httpHost!=$refInfo['host'] && $this->vC!=$BE_USER->veriCode() && !$TYPO3_CONF_VARS['SYS']['doNotCheckReferer'])	{
+		if ($httpHost!=$refInfo['host'] && $vC!=$BE_USER->veriCode() && !$TYPO3_CONF_VARS['SYS']['doNotCheckReferer'])	{
 			t3lib_BEfunc::typo3PrintError ('Access Error','Referer did not match and veriCode was not valid either!','');
 			exit;
 		}
@@ -101,7 +114,7 @@ $TYPO3_CONF_VARS['SYS']['doNotCheckReferer']=1;
 		parent::init();
 
 
-// TODO			// Initialize GPvars:
+#TODO			// Initialize GPvars:
 		$this->data = t3lib_div::_GP('data');
 		$this->returnUrl = t3lib_div::_GP('returnUrl');
 		$this->returnUrl = $this->returnUrl ? $this->returnUrl : t3lib_div::getIndpEnv('HTTP_REFERER');
