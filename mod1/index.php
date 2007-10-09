@@ -153,9 +153,11 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 //		$content=$this->doc->section('Message #1:',$content,0,1);
 
 		$cmd = t3lib_div::GParrayMerged('SLCMD');
+
 		if (is_array($cmd['SELECT']['txdamCat'])) {
-			$uid = key($cmd['SELECT']['txdamCat']);
+			$uid = intval(key($cmd['SELECT']['txdamCat']));
 		}
+
 
 			$treedb = t3lib_div::makeInstance('tx_damcatedit_db');
 			$treedb->init('tx_dam_cat', 'parent_id');
@@ -198,7 +200,7 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 
 				$treedb->setResReturn(true);
 				$treedb->setSortFields($orderBy);
-				$dblist->res = $treedb->getSubRecords($uid, '*');
+				$dblist->res = $treedb->getSubRecords($uid, 'tx_dam_cat.*');
 
 
 

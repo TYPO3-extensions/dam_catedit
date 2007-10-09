@@ -154,10 +154,10 @@ class tx_damcatedit_db {
 		global $TCA;
 
 		if($sortFields) {
-			$this->sorting = ' ORDER BY '.$sortFields;
+			$this->sorting = $sortFields;
 		} else {
-			$this->sorting = $TCA[$this->table]['ctrl']['sortby'] ? ' ORDER BY '.$TCA[$this->table]['ctrl']['sortby'] : '';
-			$this->sorting = $this->sorting ? $this->sorting : ' '.$TCA[$this->table]['ctrl']['default_sortby'];
+			$this->sorting = $TCA[$this->table]['ctrl']['sortby'] ? $TCA[$this->table]['ctrl']['sortby'] : '';
+// TODO stripOrderBy			$this->sorting = $this->sorting ? $this->sorting : ' '.$TCA[$this->table]['ctrl']['default_sortby'];
 		}
 	}
 
@@ -217,9 +217,9 @@ class tx_damcatedit_db {
 		$fields = $fields?$fields:$this->fieldList;
 
 		$rows = array();
-		$res = mysql(TYPO3_db, 'SELECT '.$fields.' FROM '.$this->table.' WHERE uid IN ('.$uids.')'.$where.$this->where_default.$this->pidListWhere.($sorting?$this->sorting:''));
-		echo mysql_error();
-		while ($row = mysql_fetch_assoc($res))	{
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, 'uid IN ('.$uids.')'.$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''));
+		if(!$res) echo $GLOBALS['TYPO3_DB']->sql_error();
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
 			$rows[$row['uid']]=$row;
 		}
 		return $rows;
@@ -282,13 +282,13 @@ class tx_damcatedit_db {
 	function getSubRecords ($uid, $fields='', $where='', $sorting=true)	{
 		$fields = $fields?$fields:$this->fieldList;
 
-		$res = mysql(TYPO3_db, 'SELECT '.$fields.' FROM '.$this->table.' WHERE '.$this->parentField.'='.intval($uid).$where.$this->where_default.$this->pidListWhere.($sorting?$this->sorting:''));
-		echo mysql_error();
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, $this->parentField.'='.intval($uid).$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''));
+		if(!$res) echo $GLOBALS['TYPO3_DB']->sql_error();
 
 		if($this->resReturn) return $res;
 
 		$rows = array();
-		while ($row = mysql_fetch_assoc($res))	{
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
 			$rows[$row['uid']]=$row;
 		}
 		return $rows;
@@ -409,10 +409,9 @@ class tx_damcatedit_db {
 		$theList='';
 
 		if ($uid && $depth>0)	{
-			$query = 'SELECT uid FROM '.$this->table.' WHERE '.$this->parentField.'='.intval($uid).$where.$this->where_default.$this->sorting;
-			$res = mysql(TYPO3_db, $query);
-			echo mysql_error();
-			while ($row = mysql_fetch_assoc($res))	{
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid', $this->table, $this->parentField.'='.intval($uid).$where.$this->where_default, '', $this->sorting);
+			if(!$res) echo $GLOBALS['TYPO3_DB']->sql_error();
+			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
 				if ($beginLevel<=0)	{
 					$theList.=$row['uid'].',';
 				}
@@ -448,15 +447,15 @@ class tx_damcatedit_db {
 		$uid = intval($uid);
 		while ($uid!=0 && $loopCheck>0)	{
 			$loopCheck--;
-			$res = mysql(TYPO3_db, 'SELECT '.$selFields.' FROM '.$this->table.' WHERE uid='.intval($uid).$where.$this->where_default);
-			if ($row = mysql_fetch_assoc($res))	{
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($selFields, $this->table, 'uid='.intval($uid).$where.$this->where_default);
+			if ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res))	{
 				if (count($MPA))	{
 					$curMP=end($MPA);
 					if (!strcmp($row['uid'],$curMP[0]))	{
 
 						array_pop($MPA);
-						$res = mysql(TYPO3_db, 'SELECT '.$selFields.' FROM '.$this->table.' WHERE uid='.intval($curMP[1]).$where.$this->where_default);
-						$row = mysql_fetch_assoc($res);
+						$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($selFields, $this->table, 'uid='.intval($curMP[1]).$where.$this->where_default);
+						$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 						$row['_MOUNTED_FROM']=$curMP[0];
 						if (!is_array($row))	return array();	// error - no record...
 					}
@@ -508,20 +507,18 @@ class tx_damcatedit_db {
 	function writeMM($dataRecordUid,$treeRecordUid)	{
 
 			// delete all relations:
-		$uid = intval($uid);
-		$query='DELETE FROM '.$this->mm_table.' WHERE uid_local='.$dataRecordUid.' AND foreign_uid='.$treeRecordUid;
-		$query.=$this->mm_prependTableName?' AND tablenames=\''.$this->table.'\'':'';
+		$res = $GLOBALS['TYPO3_DB']->exec_DELETEquery($this->mm_table, 'uid_local='.(int)$dataRecordUid.' AND foreign_uid='.(int)$treeRecordUid.($this->mm_prependTableName?' AND tablenames='.$GLOBALS['TYPO3_DB']->fullQuoteStr($this->table,$this->mm_table):''));
 
-		$res=mysql(TYPO3_db,$query);
-
-		if ($this->mm_prependTableName)	{
-			$prependTable=',tablenames';
-			$prependTableName=',\''.addslashes($this->table).'\'';
-		}
 		$sort=0; // what to set here???
-		$query='INSERT INTO '.$this->mm_table.' (uid_local,uid_foreign,sorting'.$prependTable.') VALUES (\''.$dataRecordUid.'\',\''.$treeRecordUid.'\','.$sort.$prependTableName.')';
-
-		$res=mysql(TYPO3_db,$query);
+		$data = array(
+			'uid_local' => $dataRecordUid,
+			'uid_foreign' => $treeRecordUid,
+			'sorting' => $sort,
+		);
+		if ($this->mm_prependTableName)	{
+			$data['tablenames'] = $this->table;
+		}
+		$GLOBALS['TYPO3_DB']->exec_INSERTquery($this->mm_table, $data);
 
 // !!!!!! update the relation counter in the data table
 
@@ -553,12 +550,12 @@ class tx_damcatedit_db {
 		$query='';
 		if (is_array($ctrl))	{
 			if ($ctrl['delete'] && in_array('delete',$useFields))	{
-				$query.=' AND NOT '.$table.'.'.$ctrl['delete'];
+				$query.=' AND '.$table.'.'.$ctrl['delete'].'=0';
 			}
 			if (is_array($ctrl['enablecolumns']))	{
 				if ($ctrl['enablecolumns']['disabled'] && in_array('disabled',$useFields))	{
 					$field = $table.'.'.$ctrl['enablecolumns']['disabled'];
-					$query.=' AND NOT '.$field;
+					$query.=' AND '.$field.'=0';
 				}
 				if ($ctrl['enablecolumns']['starttime'] && in_array('starttime',$useFields))	{
 					$field = $table.'.'.$ctrl['enablecolumns']['starttime'];
