@@ -1,26 +1,30 @@
-06-11-26 Rene Fritz  <r.fritz@colorcube.de>
+2007-09-29  Michael Stucki  <michael@typo3.org>
+
+	* Takeover by the DAM development team
+
+2006-11-26  Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: Return to list and reload navframe when new category was created
 
-06-09-14 Rene Fritz  <r.fritz@colorcube.de>
+2006-09-14  Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: versioning action link works now
 	* Added: veriCode() to links
 
-06-08-31 Rene Fritz  <r.fritz@colorcube.de>
+2006-08-31  Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: Workaround added: delete function in navframe jumped to another submodule when that was called before the current submodule
 	* Fix: Delete function in list module works now
 	* Fix: non-admins don't get access to root elements in list module when clicking on the root icon in nav frame
 
-06-05-29 Rene Fritz  <r.fritz@colorcube.de>
+2006-05-29  Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: use of $GLOBALS['TYPO3_DB']->xxx
 
-06-04-11 Rene Fritz  <r.fritz@colorcube.de>
+2006-04-11  Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: In the navframe, the path to the 'reload'-icon was wrong
 
-06-04-07 Rene Fritz  <r.fritz@colorcube.de>
+2006-04-07  Rene Fritz  <r.fritz@colorcube.de>
 
 	* 1.0 release
