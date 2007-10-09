@@ -377,6 +377,8 @@ class tx_damcatedit_clickMenu {
 	 * @return	array		Processed $menuItems array
 	 */
 	function processingByExtClassArray($menuItems,$table,$uid)	{
+		global $TYPO3_CONF_VARS;
+		
 		if (is_array($this->extClassArray))	{
 			reset($this->extClassArray);
 			while(list(,$conf)=each($this->extClassArray))	{
@@ -1332,7 +1334,6 @@ if (top.content && top.content'.$frameName.' && top.content'.$frameName.'.setLay
 	 */
 	function frameLocation($str)	{
 		return $str.'.location';
-		#return $str.'.URL';
 	}
 }
 

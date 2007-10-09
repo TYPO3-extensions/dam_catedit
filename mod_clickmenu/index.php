@@ -102,7 +102,8 @@ class SC_tx_damcatedit_clickmenu extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function init()	{
-		global $BE_USER,$BACK_PATH;
+		global $BE_USER,$BACK_PATH, $TYPO3_CONF_VARS;
+		
 
 		parent::init();
 
@@ -203,6 +204,8 @@ class SC_tx_damcatedit_clickmenu extends t3lib_SCbase {
 	 * @return	void
 	 */
 	function main()	{
+		global $TYPO3_CONF_VARS;
+		
 
 			// Initialize Clipboard object:
 		$clipObj = t3lib_div::makeInstance('t3lib_clipboard');

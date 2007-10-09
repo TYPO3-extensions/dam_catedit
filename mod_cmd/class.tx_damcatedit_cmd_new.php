@@ -94,9 +94,11 @@ class tx_damcatedit_cmd_new extends t3lib_extobjbase {
 			$getArray['edit'][$table][$this->defaultPid]='new';
 			$getArray['defVals'] = t3lib_div::_GP('defVals');
 			$getArray['defVals'][$table]['pid']=$this->defaultPid;
+			$getArray['returnUrl']=$this->pObj->returnUrl;
+			$getArray['redirect']=$this->pObj->redirect;
 
 
-			$getArray = t3lib_div::compileSelectedGetVarsFromArray('edit,defVals,overrideVals,columnsOnly,disHelp,noView,editRegularContentFromId',$getArray);
+			$getArray = t3lib_div::compileSelectedGetVarsFromArray('returnUrl,redirect,edit,defVals,overrideVals,columnsOnly,disHelp,noView,editRegularContentFromId',$getArray);
 			$getUrl = t3lib_div::implodeArrayForUrl('',$getArray);
 
 

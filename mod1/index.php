@@ -162,6 +162,7 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 		$treedb = t3lib_div::makeInstance('tx_damcatedit_db');
 		$treedb->init('tx_dam_cat', 'parent_id');
 		$treedb->setPidList($this->id);
+// TODO overlay cat records with BE users language
 		$treedb->where_default .= ' AND sys_language_uid=0';
 
 
