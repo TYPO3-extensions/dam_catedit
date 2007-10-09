@@ -114,7 +114,7 @@ class tx_damcatedit_mod_cmd extends t3lib_SCbase {
 		parent::init();
 
 
-#TODO			// Initialize GPvars:
+			// Initialize GPvars:
 		$this->data = t3lib_div::_GP('data');
 		$this->returnUrl = t3lib_div::_GP('returnUrl');
 		$this->returnUrl = $this->returnUrl ? $this->returnUrl : t3lib_div::getIndpEnv('HTTP_REFERER');

@@ -341,11 +341,6 @@ $this->alternateBgColors = false;
 					}
 				}
 
-				if($table=='tx_dam') {
-					$params='SLCMD[DESELECT_ID][tx_dam]['.$row['uid'].']=1';
-					$actionIcon='<a href="index.php?'.$params.'"><img src="'.$BACK_PATH.PATH_txdam_rel.'i/button_deselect.gif" width="11" height="10" border="0" title="'.$LANG->getLL('deselect').'" align="top" /></a>';
-				}
-
 				$itemContentTRows.=$this->addElement($theIcon, $theData, $actionIcon, $row_bgColor, '', true);
 
 					// Thumbsnails?

@@ -172,7 +172,7 @@ class tx_damcatedit_clickMenu {
 			// Setting flags:
 		if ($params['listFrame'])	$this->listFrame = true;
 		if ($GLOBALS['BE_USER']->uc['condensedMode']) $this->alwaysContentFrame = true;
-
+$this->listFrame = false;
 		if (strcmp($params['uid'],''))	{
 			$this->isDBmenu = true;
 		} else {
@@ -201,7 +201,7 @@ class tx_damcatedit_clickMenu {
 			}
 		}
 
-			// Return clickmenu conten:
+			// Return clickmenu content:
 		return $CMcontent;
 	}
 
@@ -641,12 +641,11 @@ class tx_damcatedit_clickMenu {
 		$editOnClick='if('.$loc.'){'.$loc.".document.location=top.TS.PATH_typo3+'".
 			($this->listFrame?
 				"alt_doc.php?returnUrl='+top.rawurlencode(".$this->frameLocation($loc.'.document').")+'&edit[".$table."][-".$uid."]=new&defVals[".$table."][parent_id]=".$uid."&defVals[".$table."][pid]=".$this->id."'":	// $this-id does not exist
-				###t3lib_extMgm::extRelPath('dam_catedit').'mod1/index.php?id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new\'').
-				t3lib_extMgm::extRelPath('dam_catedit').'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new&defVals['.$table.'][parent_id]='.$uid."&defVals[".$table."][pid]=".$this->id."'").
+				t3lib_extMgm::extRelPath('dam_catedit').'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&returnUrl=\'+top.rawurlencode('.$this->frameLocation($loc.'.document').')+\'&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.intval($pid).'&edit['.$table.'][-'.$uid.']=new&defVals['.$table.'][parent_id]='.$uid."&defVals[".$table."][pid]=".$this->id."'").
+
 			';}';
 
 		return $this->linkItem(
-###			$this->label('new'),
 			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:dam_catedit/locallang_cm.xml:tx_damcatedit_cm1.newSubCat',1)),
 			$this->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->PH_backPath,'gfx/new_'.($table=='pages'&&$this->listFrame?'page':'el').'.gif','width="'.($table=='pages'?'13':'11').'" height="12"').' alt="" />'),
 			$editOnClick.'return hideCM();'

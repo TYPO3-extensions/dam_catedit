@@ -239,7 +239,7 @@ class tx_damcatedit_positionMap {
 	 * @return	string		HTML code for the tree.
 	 */
 	function positionTree($id,$pageinfo,$perms_clause,$R_URI)	{
-		global $LANG, $BE_USER;
+		global $LANG, $BE_USER, $TYPO3_CONF_VARS;
 
 			// Make page tree object:
 		$t3lib_pageTree = t3lib_div::makeInstance('localPageTree');

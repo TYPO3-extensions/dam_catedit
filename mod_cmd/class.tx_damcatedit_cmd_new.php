@@ -103,6 +103,7 @@ class tx_damcatedit_cmd_new extends t3lib_extobjbase {
 
 
 			header('Location: '.$BACK_PATH.'alt_doc.php?id='.$this->defaultPid.$getUrl);
+			exit;
 		} else {
 			$content.= 'wrong comand!';
 		}

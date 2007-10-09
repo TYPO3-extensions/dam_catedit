@@ -1,8 +1,11 @@
+06-11-26 Rene Fritz  <r.fritz@colorcube.de>
+
+	* Fix: Return to list and reload navframe when new category was created
+
 06-11-24 Rene Fritz  <r.fritz@colorcube.de>
 
 	* Fix: versioning action link works now
 	* Added: veriCode() to links
-	* Fix: Return to list and reload navframe when new category was created
 
 06-08-31 Rene Fritz  <r.fritz@colorcube.de>
 
