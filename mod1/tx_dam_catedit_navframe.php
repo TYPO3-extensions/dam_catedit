@@ -212,7 +212,7 @@ class tx_damcatedit_navframe {
 		$this->content.= '
 			<p class="c-refresh">
 				<a href="'.htmlspecialchars(t3lib_div::linkThisScript(array('unique' => uniqid('tx_dam_catedit_navframe')))).'">'.
-				'<img'.t3lib_iconWorks::skinImg('',$BACK_PATH.'gfx/refresh_n.gif','width="14" height="14"').' title="'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'" alt="" />'.
+				'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/refresh_n.gif','width="14" height="14"').' title="'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'" alt="" />'.
 				$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'</a>
 			</p>
 			<br />';
