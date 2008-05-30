@@ -1,3 +1,8 @@
+2008-05-30  Benjamin Mack  <benni@typo3.org>
+
+	* Updated version to 1.1.0-dev
+	* Fixed bug #7342-2: dam_catedit doesn't work properly with 4.2-trunk (clickmenu javascript error), part 2 (Thanks to David Steeb)
+
 2007-09-29  Michael Stucki  <michael@typo3.org>
 
 	* Takeover by the DAM development team

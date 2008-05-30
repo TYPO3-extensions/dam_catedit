@@ -320,7 +320,7 @@ $this->alternateBgColors = false;
 
 					// The icon with link
 				$theIcon = '<img src="'.$this->backPath.$iconfile.'" width="18" height="16" border="0" title="'.$alttext.'" />';
-#				$theIcon = $GLOBALS['SOBE']->doc->wrapClickMenuOnIcon($theIcon,$table,$row['uid']);
+				$theIcon = $GLOBALS['SOBE']->doc->wrapClickMenuOnIcon($theIcon,$table,$row['uid']);
 
 				$thumbImg = '';
 				if ($this->thumbs) {
@@ -529,7 +529,7 @@ $LOISmode=false;
 							$lab = 'V';
 						}
 
-						$cells[]='<a href="'.htmlspecialchars($this->backPath.t3lib_extMgm::extRelPath('version')).'cm1/index.php?table='.rawurlencode($table).'&uid='.rawurlencode($row['uid']).'" style="'.htmlspecialchars($st).'">'.
+						$cells[]='<a href="'.htmlspecialchars($this->backPath.t3lib_extMgm::extRelPath('version')).'cm1/index.php?table='.rawurlencode($table).'&uid='.rawurlencode($row['uid']).'" class="typo3-ctrl-versioning" style="'.htmlspecialchars($st).'">'.
 								$lab.
 								'</a>';
 					}
@@ -599,7 +599,7 @@ $quickDelete = true;
 					$title = $row['title'].' ('.$row['file_name'].')';
 					$onClick = 'if (confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$title)).')) {jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');} return false;';
 					$cells[] = '<a href="#" onclick="'.$onClick.'">'.
-								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/delete_record.gif" width="12" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
+								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/garbage.gif', 'width="16" height="16"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
 								'</a>';
 				}
 
@@ -609,7 +609,7 @@ $quickDelete = true;
 					$cmd = 'tx_dam_cmd_filedelete';
 					$script = $BACK_PATH.PATH_txdam_rel.'mod_cmd/index.php?CMD='.$cmd.'&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.rawurlencode($row['uid']).'&returnUrl='.t3lib_div::getIndpEnv('TYPO3_REQUEST_URL');
 					$cells[] = '<a href="'.htmlspecialchars($script).'">'.
-							'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/delete_record.gif" width="12" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
+							'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/garbage.gif', 'width="11" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
 							'</a>';
 				}
 
@@ -980,7 +980,6 @@ $quickDelete = true;
 	function linkWrapItems($table,$uid,$code,$row)	{
 			// Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 		if (!strcmp($code,'')) {$code='<i>['.$GLOBALS['LANG']->php3Lang['labels']['no_title'].']</i> - '.t3lib_BEfunc::getRecordTitle($table,$row);}
-		$code=t3lib_div::fixed_lgd_cs($code,$this->fixedL);
 		if ($table=='pages')	{
 			return '<a href="'.$this->listURL($uid).'">'.$code.'</a>';
 		} else {

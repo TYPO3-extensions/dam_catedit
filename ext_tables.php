@@ -24,5 +24,12 @@ if (TYPO3_MODE=='BE')	{
 		'LLL:EXT:dam_catedit/mod_cmd/locallang.xml:tx_damcatedit_cmd_new.title'
 	);
 
+		// adds the clickMenu output that is specific for tx_dam_cat
+	$GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'][] = array(
+		'name' => 'tx_damcatedit_cm',
+		'path' => t3lib_extMgm::extPath($_EXTKEY).'lib/class.tx_damcatedit_cm.php'
+    );
+	
+	
 }
 ?>

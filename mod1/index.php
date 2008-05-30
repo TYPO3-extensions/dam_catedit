@@ -76,10 +76,20 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 		if (($this->id && $access) || ($BE_USER->user['admin'] && !$this->id))	{
 
 				// Draw the header.
-			$this->doc = t3lib_div::makeInstance('mediumDoc');
+			$this->doc = t3lib_div::makeInstance('noDoc');
 			$this->doc->backPath = $BACK_PATH;
 			$this->doc->form='<form action="" method="post">';
 
+			if (t3lib_div::compat_version('4.2.0')) {  
+				$this->doc->getContextMenuCode();
+			} else {
+				$CMparts = $this->doc->getContextMenuCode();
+				$this->doc->bodyTagAdditions = $CMparts[1];
+				$this->doc->JScode .= $CMparts[0];
+				$this->doc->postCode .= $CMparts[2];
+			}
+			
+			
 
 			$this->doc->postCode='
 				<script language="javascript" type="text/javascript">
