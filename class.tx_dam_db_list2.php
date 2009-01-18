@@ -365,7 +365,7 @@ $actionIcon='';
 						if ($permsEdit && $this->table && is_array($currentIdList) && in_array('editRec',$shEl))	{
 							$editIdList = implode(',',$currentIdList);
 							$params='&edit['.$table.']['.$editIdList.']=edit&columnsOnly='.implode(',',$this->fieldArray).'&disHelp=1';
-							$content = '<img src="'.$this->backPath.'gfx/edit2.gif" width="11" height="12" vspace="2" border="0" align="top" title="'.$GLOBALS['LANG']->getLL('editShownColumns').'" />';
+ 							$content = '<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/edit2.gif','width="11" height="12"').' vspace="2" border="0" align="top" title="'.$GLOBALS['LANG']->getLL('editShownColumns').'" />';
 							$theData[$fCol].= $this->wrapEditLink($content, $params);
 						}
 					}
@@ -376,7 +376,7 @@ $actionIcon='';
 						if (!$TCA[$table]['ctrl']['readOnly'] && $permsEdit && $TCA[$table]['columns'][$fCol])	{
 							$editIdList = implode(',',$currentIdList);
 							$params='&edit['.$table.']['.$editIdList.']=edit&columnsOnly='.$fCol.'&disHelp=1';
-							$content = '<img src="'.$this->backPath.'gfx/edit2.gif" width="11" height="12" vspace="2" border="0" align="top" title="'.sprintf($GLOBALS['LANG']->getLL('editThisColumn'),ereg_replace(":$",'',trim($GLOBALS['LANG']->sL(t3lib_BEfunc::getItemLabel($table,$fCol))))).'" />';
+ 							$content = '<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/edit2.gif','width="11" height="12"').' vspace="2" border="0" align="top" title="'.sprintf($GLOBALS['LANG']->getLL('editThisColumn'),ereg_replace(":$",'',trim($GLOBALS['LANG']->sL(t3lib_BEfunc::getItemLabel($table,$fCol))))).'" />';
 							$theData[$fCol].= $this->wrapEditLink($content, $params);
 						}
 					} else {
@@ -599,7 +599,7 @@ $quickDelete = true;
 					$title = $row['title'].' ('.$row['file_name'].')';
 					$onClick = 'if (confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$title)).')) {jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');} return false;';
 					$cells[] = '<a href="#" onclick="'.$onClick.'">'.
-								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/garbage.gif', 'width="16" height="16"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
+ 								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/delete_record.gif', 'width="12" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
 								'</a>';
 				}
 
@@ -609,7 +609,7 @@ $quickDelete = true;
 					$cmd = 'tx_dam_cmd_filedelete';
 					$script = $BACK_PATH.PATH_txdam_rel.'mod_cmd/index.php?CMD='.$cmd.'&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.rawurlencode($row['uid']).'&returnUrl='.t3lib_div::getIndpEnv('TYPO3_REQUEST_URL');
 					$cells[] = '<a href="'.htmlspecialchars($script).'">'.
-							'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/garbage.gif', 'width="11" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
+ 							'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/delete_record.gif', 'width="12" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
 							'</a>';
 				}
 
