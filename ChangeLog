@@ -1,3 +1,7 @@
+2009-02-04  Michael Stucki  <michael@typo3.org>
+
+	* Add closing PHP tag to lib/class.tx_damcatedit_cm.php (was missing before)
+
 2009-01-18  Michiel Roos <michiel@netcreators.com>
 
 	* #8372: No IconWorks used (Thanks to Niels Fr?hling)
