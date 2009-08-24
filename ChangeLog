@@ -1,3 +1,7 @@
+2009-08-24  Michiel Roos <michiel@netcreators.com>
+
+	* #11700: use _GPmerged instead of GParrayMerged  (Thanks to Georg Ringer)
+
 2009-02-04  Michael Stucki  <michael@typo3.org>
 
 	* Add closing PHP tag to lib/class.tx_damcatedit_cm.php (was missing before)
