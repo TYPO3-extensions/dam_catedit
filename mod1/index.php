@@ -211,12 +211,7 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 //			'';
 //		$content=$this->doc->section('Message #1:',$content,0,1);
 
-		if (version_compare(TYPO3_version, '4.3.0', '<')) {
-			$cmd = t3lib_div::GParrayMerged('SLCMD');
-		}
-		else {
-			$cmd = t3lib_div::_GPmerged('SLCMD');
-		}
+		$cmd = t3lib_div::_GPmerged('SLCMD');
 
 		if (is_array($cmd['SELECT']['txdamCat'])) {
 			$uid = intval(key($cmd['SELECT']['txdamCat']));
