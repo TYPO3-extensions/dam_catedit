@@ -1,3 +1,7 @@
+2010-01-05  Michiel Roos <michiel@netcreators.com>
+
+	* #11700: use _GPmerged instead of GParrayMerged, part two  (Thanks to Georg Ringer)
+
 2009-08-24  Michiel Roos <michiel@netcreators.com>
 
 	* #11700: use _GPmerged instead of GParrayMerged  (Thanks to Georg Ringer)
