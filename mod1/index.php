@@ -265,7 +265,14 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			#		$fieldList	= 'tx_dam_cat.'.implode(',tx_dam_cat.',t3lib_div::trimExplode(',',$dblist->setFields['tx_dam_cat'],1));
 			#		$this->selection->qg->query['FROM']['tx_dam_cat']=$fieldList;
 
-			$orderBy = ($TCA['tx_dam_cat']['ctrl']['sortby']) ? 'tx_dam_cat.'.$TCA['tx_dam_cat']['ctrl']['sortby'] : 'tx_dam_cat.sorting';
+			$defaultSortBy = ($TCA['tx_dam_cat']['ctrl']['default_sortby']) ? $GLOBALS['TYPO3_DB']->stripOrderBy($TCA['tx_dam_cat']['ctrl']['default_sortby']) : '';
+			$sortby = $TCA['tx_dam_cat']['ctrl']['sortby'] ? $TCA['tx_dam_cat']['ctrl']['sortby'] : '';
+			$orderFields = ($defaultSortBy) ? $defaultSortBy : $sortby;
+			$orderFieldsArr = t3lib_div::trimExplode(',', $orderFields);
+			foreach($orderFieldsArr as $k=>$v) {
+				$orderFieldsArr[$k] = 'tx_dam_cat.' .$v;
+			}
+			$orderBy = implode(',', $orderFieldsArr);
 
 			if ($dblist->sortField)	{
 				if (in_array($dblist->sortField,$dblist->makeFieldList('tx_dam_cat',1)))	{
