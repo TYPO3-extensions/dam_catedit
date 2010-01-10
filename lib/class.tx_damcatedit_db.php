@@ -156,8 +156,9 @@ class tx_damcatedit_db {
 		if($sortFields) {
 			$this->sorting = $sortFields;
 		} else {
-			$this->sorting = $TCA[$this->table]['ctrl']['sortby'] ? $TCA[$this->table]['ctrl']['sortby'] : '';
-#TODO stripOrderBy			$this->sorting = $this->sorting ? $this->sorting : ' '.$TCA[$this->table]['ctrl']['default_sortby'];
+			$defaultSortBy = ($TCA[$this->table]['ctrl']['default_sortby']) ? $GLOBALS['TYPO3_DB']->stripOrderBy($TCA[$this->table]['ctrl']['default_sortby']) : '';
+			$sortby = $TCA[$this->table]['ctrl']['sortby'] ? $TCA[$this->table]['ctrl']['sortby'] : '';
+			$this->sorting = ($defaultSortBy) ? $defaultSortBy : $sortby;
 		}
 	}
 
