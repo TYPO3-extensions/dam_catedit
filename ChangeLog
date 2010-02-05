@@ -1,4 +1,9 @@
+2010-02-05  Michiel Roos <michiel@netcreators.com>
+
+	* Fix #13227: dam_catedit uses 'ereg_replace()' which is deprecated in PHP 5.3 (Thanks to Peter Foerger)
+
 2010-01-10  Michiel Roos <michiel@netcreators.com>
+
 	* Fix #12918: Respect $TCA['tx_dam_cat']['ctrl']['default_sortby'] = 'mychoice'; everywhere (Thanks to Uschi Renziehausen) 
 
 2010-01-05  Michiel Roos <michiel@netcreators.com>

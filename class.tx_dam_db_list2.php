@@ -376,7 +376,7 @@ $actionIcon='';
 						if (!$TCA[$table]['ctrl']['readOnly'] && $permsEdit && $TCA[$table]['columns'][$fCol])	{
 							$editIdList = implode(',',$currentIdList);
 							$params='&edit['.$table.']['.$editIdList.']=edit&columnsOnly='.$fCol.'&disHelp=1';
- 							$content = '<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/edit2.gif','width="11" height="12"').' vspace="2" border="0" align="top" title="'.sprintf($GLOBALS['LANG']->getLL('editThisColumn'),ereg_replace(":$",'',trim($GLOBALS['LANG']->sL(t3lib_BEfunc::getItemLabel($table,$fCol))))).'" />';
+ 							$content = '<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/edit2.gif','width="11" height="12"').' vspace="2" border="0" align="top" title="'.sprintf($GLOBALS['LANG']->getLL('editThisColumn'),preg_replace(":$",'',trim($GLOBALS['LANG']->sL(t3lib_BEfunc::getItemLabel($table,$fCol))))).'" />';
 							$theData[$fCol].= $this->wrapEditLink($content, $params);
 						}
 					} else {
@@ -776,7 +776,7 @@ $quickDelete = true;
 		$opt = array();
 		$opt[] = '<option value=""></option>';
 		foreach($fields as $fN)	{
-			$fL = is_array($TCA[$table]['columns'][$fN]) ? ereg_replace(':$','',$LANG->sL($TCA[$table]['columns'][$fN]['label'])) : '['.$fN.']';	// Field label
+			$fL = is_array($TCA[$table]['columns'][$fN]) ? preg_replace(':$','',$LANG->sL($TCA[$table]['columns'][$fN]['label'])) : '['.$fN.']';	// Field label
 			$opt[] = '
 											<option value="'.$fN.'"'.(in_array($fN,$setFields)?' selected="selected"':'').'>'.htmlspecialchars($fL).'</option>';
 		}
