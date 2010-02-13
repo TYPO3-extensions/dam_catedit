@@ -1,3 +1,7 @@
+2010-02-13  Michiel Roos <michiel@netcreators.com>
+
+	* Fix #13513: Delimiters missing in preg_replace (Thanks to Bart Dubelaar)
+
 2010-02-05  Michiel Roos <michiel@netcreators.com>
 
 	* Fix #13227: dam_catedit uses 'ereg_replace()' which is deprecated in PHP 5.3 (Thanks to Peter Foerger)
