@@ -79,6 +79,7 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			$this->doc = t3lib_div::makeInstance('noDoc');
 			$this->doc->backPath = $BACK_PATH;
 			$this->doc->form='<form action="" method="post">';
+			$this->doc->styleSheetFile2 = t3lib_extMgm::extRelPath('dam') . 'res/css/stylesheet.css';
 
 			if (t3lib_div::compat_version('4.2.0')) {  
 				$this->doc->getContextMenuCode();

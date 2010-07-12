@@ -1,3 +1,7 @@
+2010-07-12  Dmitry Dulepov  <dmitry@typo3.org>
+
+	* Fixed bug #15046: dam_catedit looks differently from other DAM modules
+
 2010-02-13  Michiel Roos <michiel@netcreators.com>
 
 	* Fix #13513: Delimiters missing in preg_replace (Thanks to Bart Dubelaar)
