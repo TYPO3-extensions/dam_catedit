@@ -21,6 +21,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'priority' => '',
 	'loadOrder' => '',
 	'module' => 'mod1,mod_cmd,mod_clickmenu',
+	'doNotLoadInFE' => 1,
 	'state' => 'alpha',
 	'uploadfolder' => 0,
 	'createDirs' => '',
