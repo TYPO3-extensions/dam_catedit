@@ -1,3 +1,6 @@
+2011-01-17  Lorenz Ulrich <lorenz.ulrich@visol.ch>
+    * Fix #15624: dam_catedit: Add 'doNotLoadInFE' => 1 to ext_emconf.php
+
 2010-07-12  Dmitry Dulepov  <dmitry@typo3.org>
 
 	* Fixed bug #15046: dam_catedit looks differently from other DAM modules
