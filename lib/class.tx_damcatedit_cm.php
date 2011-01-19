@@ -27,7 +27,7 @@
  * @author	David Steeb (david@b13.de)
  * @author	Benjamin Mack (benni@b13.de)
  */
-
+require_once(PATH_txdam.'lib/class.tx_dam_db.php');
 
 class tx_damcatedit_cm {
 	var $rec;		// the current record (as an array) that was clicked
@@ -56,8 +56,8 @@ class tx_damcatedit_cm {
 
 		if (is_array($this->rec) || $root) {
 
-			$lCP = $GLOBALS['BE_USER']->calcPerms(t3lib_BEfunc::getRecord('pages', $this->rec['pid']));
-	
+			$lCP = $GLOBALS['BE_USER']->calcPerms(t3lib_BEfunc::getRecord('pages', $root ? tx_dam_db::getPid() : $this->rec['pid']));
+
 				// Edit
 			if(!$root && ($GLOBALS['BE_USER']->isPSet($lCP, $table, 'edit')) && !in_array('edit',$this->backRef->disabledItems)) {
 				$menuItems['edit'] = $this->DAMcatEdit($table,$uid);

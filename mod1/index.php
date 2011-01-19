@@ -230,7 +230,7 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 		$treedb->where_default .= ' AND sys_language_uid=0';
 
 
-		if ($uid OR $GLOBALS['BE_USER']->isAdmin()) {
+		if (isset($uid) OR $GLOBALS['BE_USER']->isAdmin()) {
 			$recCount = $treedb->countSubRecords($uid);
 		} else {
 
@@ -290,7 +290,7 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			$treedb->setResReturn(true);
 			$treedb->setSortFields($orderBy);
 
-			if ($uid OR $GLOBALS['BE_USER']->isAdmin()) {
+			if (isset($uid) OR $GLOBALS['BE_USER']->isAdmin()) {
 				$dblist->res = $treedb->getSubRecords($uid, 'tx_dam_cat.*');
 			} else {
 				$uids = implode(',',$mounts);
