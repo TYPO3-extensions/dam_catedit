@@ -79,6 +79,8 @@ class tx_damcatedit_navframe {
 
 	var $doc;
 	var $content;
+	
+	public $innerContent;
 
 		// Internal, static: _GP
 	var $currentSubScript;
@@ -89,7 +91,7 @@ class tx_damcatedit_navframe {
 
 		$this->doc = t3lib_div::makeInstance('template');
 		$this->doc->backPath = $BACK_PATH;
-
+		$this->doc->setModuleTemplate(t3lib_extMgm::extRelPath('dam_catedit') . 'mod1/mod_template_tree.html');
 
 		$this->currentSubScript = t3lib_div::_GP('currentSubScript');
 
@@ -115,14 +117,14 @@ class tx_damcatedit_navframe {
 					parent.list_frame.location.href=theUrl;
 				}
 		
-				'.($this->doHighlight?'hilight_row("dam_cat",highLightID+"_"+bank);':'').'
+				'.($this->doHighlight?'highlight_row("dam_cat",highLightID+"_"+bank);':'').'
 		
 				'.(!$GLOBALS['CLIENT']['FORMSTYLE'] ? '' : 'if (linkObj) {linkObj.blur();}').'
 				return false;
 			}
 		
 				// Call this function, refresh_nav(), from another script in the backend if you want to refresh the navigation frame (eg. after having changed a page title or moved pages etc.)
-				// See t3lib_BEfunc::getSetUpdateSignal()
+				// See t3lib_BEfunc::setUpdateSignal()
 			function refresh_nav()	{
 				window.setTimeout("_refresh_nav();",0);
 			}
@@ -131,7 +133,7 @@ class tx_damcatedit_navframe {
 			}
 		
 				// Highlighting rows in the page tree:
-			function hilight_row(frameSetModule,highLightID) {	//
+			function highlight_row(frameSetModule,highLightID) {	//
 		
 					// Remove old:
 				theObj = document.getElementById(top.fsMod.navFrameHighlightedID[frameSetModule]);
@@ -181,9 +183,6 @@ class tx_damcatedit_navframe {
 			}
 			';
 
-
-
-
 	}
 
 
@@ -197,9 +196,73 @@ class tx_damcatedit_navframe {
 	function main()	{
 		global $LANG,$BACK_PATH,$TYPO3_CONF_VARS;
 
-		$this->content = '';
-		$this->content.= $this->doc->startPage('Navigation');
+		$this->content .= $this->getInnerContent();
+		
+		$page = $this->doc->startPage($LANG->getLL('title'));
+		$page .= $this->doc->moduleBody(
+			array(),
+			$this->getDocHeaderButtons(),
+			$this->getTemplateMarkers()
+		);
+		$page .= $this->doc->endPage();
 
+		//$this->content .= $this->doc->spacer(10);
+		$this->content = $page;
+		
+	}
+
+	/**
+	 * Gets the filled markers that are used in the HTML template.
+	 *
+	 * @return	array		The filled marker array
+	 */
+	protected function getTemplateMarkers() {
+		$markers = array(
+			'CONTENT'   => $this->content,
+		);
+
+		return $markers;
+	}
+	
+	/**
+	 * Gets the buttons that shall be rendered in the docHeader.
+	 *
+	 * @return	array		Available buttons for the docHeader
+	 */
+	protected function getDocHeaderButtons() {
+		$buttons = array(
+			'refresh' => $this->getRefreshButton(),
+		);
+
+		return $buttons;
+	}
+	
+	/**
+	 * Gets the button to set a new shortcut in the backend (if current user is allowed to).
+	 *
+	 * @return	string		HTML representiation of the shortcut button
+	 */
+	protected function getRefreshButton() {
+		global $LANG,$BACK_PATH,$TYPO3_CONF_VARS;
+	
+		$result = '';
+
+		$result .= '
+				<a href="'.htmlspecialchars(t3lib_div::linkThisScript(array('unique' => uniqid('tx_dam_catedit_navframe')))).'">'.
+				'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/refresh_n.gif','width="14" height="14"').' title="'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'" alt="" /></a>
+				';
+		
+		return $result;
+	}
+
+	/**
+	 * Gets the content that will replace CONTENT marker.
+	 *
+	 * @return	string		HTML content
+	 */
+	protected function getInnerContent() {
+	
+		global $LANG,$BACK_PATH,$TYPO3_CONF_VARS;
 
 			// the trees
 		$this->browseTrees = t3lib_div::makeInstance('tx_dam_browseTrees');
@@ -210,22 +273,17 @@ class tx_damcatedit_navframe {
 		$this->browseTrees->treeObjArr['txdamCat']->modeSelIcons = false;
 		$this->browseTrees->treeObjArr['txdamCat']->linkRootCat = true;
 
-		$this->content.= $this->browseTrees->getTrees();
-
-		$this->content.= '
-			<p class="c-refresh">
-				<a href="'.htmlspecialchars(t3lib_div::linkThisScript(array('unique' => uniqid('tx_dam_catedit_navframe')))).'">'.
-				'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/refresh_n.gif','width="14" height="14"').' title="'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'" alt="" />'.
-				$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'</a>
-			</p>
-			<br />';
+		$this->innerContent = '';
+		$this->innerContent .= $this->browseTrees->getTrees();
 
 			// Adding highlight - JavaScript
-		if ($this->doHighlight)	$this->content .=$this->doc->wrapScriptTags('
-			hilight_row("",top.fsMod.navFrameHighlightedID["dam_cat"]);
-		');
+		if ($this->doHighlight)	$this->innerContent .= $this->doc->wrapScriptTags('
+			highlight_row("",top.fsMod.navFrameHighlightedID["dam_cat"]);
+		');	
+		
+		return $this->innerContent;
+	
 	}
-
 
 	/**
 	 * Outputting the accumulated content to screen
@@ -233,10 +291,9 @@ class tx_damcatedit_navframe {
 	 * @return	void
 	 */
 	function printContent()	{
-		$this->content.= $this->doc->endPage();
 		echo $this->content;
 	}
-
+	
 }
 
 // Include extension?
