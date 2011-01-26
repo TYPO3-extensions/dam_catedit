@@ -1,3 +1,7 @@
+2011-01-25  Dan Osipov <dosipov@phillyburbs.com>
+
+	* Update ext_emconf.php following release of 1.1.3
+
 2011-01-23  Lorenz Ulrich <lorenz.ulrich@visol.ch>
 
     * Added feature #16299: Visual and functional improvement of dam_catedit
@@ -23,7 +27,7 @@
 
 2010-01-10  Michiel Roos <michiel@netcreators.com>
 
-	* Fix #12918: Respect $TCA['tx_dam_cat']['ctrl']['default_sortby'] = 'mychoice'; everywhere (Thanks to Uschi Renziehausen) 
+	* Fix #12918: Respect $TCA['tx_dam_cat']['ctrl']['default_sortby'] = 'mychoice'; everywhere (Thanks to Uschi Renziehausen)
 
 2010-01-05  Michiel Roos <michiel@netcreators.com>
 
@@ -40,7 +44,7 @@
 2009-01-18  Michiel Roos <michiel@netcreators.com>
 
 	* #8372: No IconWorks used (Thanks to Niels Fr?hling)
-	
+
 2008-12-26  Michiel Roos <michiel@netcreators.com>
 
 	* Setting version to 1.1.0
