@@ -57,6 +57,9 @@ require_once(PATH_txdam.'lib/class.tx_dam_browsetrees.php');
 
 class tx_damcatedit_module1 extends tx_dam_SCbase {
 
+	public $moduleContent;
+
+
 	/**
 	 * Main function of the module. Write the content to $this->content
 	 */
@@ -76,8 +79,9 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 		if (($this->id && $access) || ($BE_USER->user['admin'] && !$this->id))	{
 
 				// Draw the header.
-			$this->doc = t3lib_div::makeInstance('noDoc');
+			$this->doc = t3lib_div::makeInstance('template');
 			$this->doc->backPath = $BACK_PATH;
+			$this->doc->setModuleTemplate(t3lib_extMgm::extRelPath('dam_catedit') . 'mod1/mod_template.html');
 			$this->doc->form='<form action="" method="post">';
 			$this->doc->styleSheetFile2 = t3lib_extMgm::extRelPath('dam') . 'res/css/stylesheet.css';
 
@@ -90,19 +94,6 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 				$this->doc->postCode .= $CMparts[2];
 			}
 			
-			
-
-			$this->doc->postCode='
-				<script language="javascript" type="text/javascript">
-
-					if (top.content && top.content.nav_frame && top.content.nav_frame.refresh_nav)	{
-						// top.content.nav_frame.refresh_nav();
-					}
-
-					script_ended = 1;
-				</script>
-			';
-
 				// Add JavaScript functions to the page:
 			$this->doc->JScode=$this->doc->wrapScriptTags('
 				function jumpToUrl(URL)	{	//
@@ -123,9 +114,6 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 					top.fsMod.recentIds["dam_cat"]=id;
 					top.fsMod.navFrameHighlightedID["dam_cat"]="pages"+id+"_"+top.fsMod.currentBank;	// For highlighting
 
-					if (top.content && top.content.nav_frame && top.content.nav_frame.refresh_nav)	{
-						top.content.nav_frame.refresh_nav();
-					}
 				}
 				'.$this->doc->redirectUrls(t3lib_div::getIndpEnv('REQUEST_URI')).'
 				function editRecords(table,idList,addParams,CBflag)	{	//
@@ -153,30 +141,26 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 				}
 
 				if (top.fsMod) top.fsMod.recentIds["dam_cat"] = '.intval($this->id).';
+
 			');
 
-				// should be done on changes only, but that's not possible (tce_db.php react on 'pages' only)
-			t3lib_BEfunc::getSetUpdateSignal('updatePageTree');
+				// title in document body
+			$this->content.= $this->doc->header($LANG->getLL('title'));
+			$this->content.= $this->doc->spacer(5);
 
-			###$headerSection = $this->doc->getHeader('pages',$this->pageinfo,$this->pageinfo['_thePath']).'<br>'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.path',1).': '.t3lib_div::fixed_lgd_pre($this->pageinfo['_thePath'],50);
+				// render module content
+			$this->content.= $this->moduleContent();
+			
+			$page = $this->doc->startPage($LANG->getLL('title'));
+			$page.= $this->doc->moduleBody(
+				array(),
+				$this->getDocHeaderButtons(),
+				$this->getTemplateMarkers()
+			);
+			$page .= $this->doc->endPage();
 
-			$this->content.=$this->doc->startPage($LANG->getLL('title'));
-			$this->content.=$this->doc->header($LANG->getLL('title'));
-			$this->content.=$this->doc->spacer(5);
-			###$this->content.=$this->doc->section('',$this->doc->funcMenu($headerSection,t3lib_BEfunc::getFuncMenu($this->id,'SET[function]',$this->MOD_SETTINGS['function'],$this->MOD_MENU['function'])));
-			###$this->content.=$this->doc->divider(5);
-
-
-			// Render content:
-			$this->moduleContent();
-
-
-			// ShortCut
-			if ($BE_USER->mayMakeShortcut())	{
-				$this->content.=$this->doc->spacer(20).$this->doc->section('',$this->doc->makeShortcutIcon('id',implode(',',array_keys($this->MOD_MENU)),$this->MCONF['name']));
-			}
-
-			$this->content.=$this->doc->spacer(10);
+			$this->content = $page;
+			
 		} else {
 				// If no access or if ID == zero
 
@@ -194,9 +178,6 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 	 * Prints out the module HTML
 	 */
 	function printContent()	{
-
-		$this->content.=$this->doc->endPage();
-		$this->content = $this->doc->insertStylesAndJS($this->content);
 		echo $this->content;
 	}
 
@@ -299,19 +280,90 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 
 			$dblist->generateList();
 
+			$this->moduleContent.= '<form action="'.$dblist->listURL().'" method="post" name="dblistForm">';
+			$this->moduleContent.= $dblist->HTMLcode;
+			$this->moduleContent.= '<input type="hidden" name="cmd_table" /><input type="hidden" name="cmd" /></form>';
+			$this->moduleContent.= $dblist->fieldSelectBox();
+		}
+		
+		return $this->moduleContent;
+		
+	}
 
+	/**
+	 * Gets the filled markers that are used in the HTML template.
+	 *
+	 * @return	array		The filled marker array
+	 */
+	protected function getTemplateMarkers() {
+		$markers = array(
+			'CONTENT'   => $this->content,
+			'TITLE'     => $GLOBALS['LANG']->getLL('title'),
+		);
 
-			$content.= '<form action="'.$dblist->listURL().'" method="post" name="dblistForm">';
-			$content.= $dblist->HTMLcode;
-			$content.= '<input type="hidden" name="cmd_table"><input type="hidden" name="cmd"></form>';
-			$content.= $dblist->fieldSelectBox();
+		return $markers;
+	}
+
+	/**
+	 * Gets the buttons that shall be rendered in the docHeader.
+	 *
+	 * @return	array		Available buttons for the docHeader
+	 */
+	protected function getDocHeaderButtons() {
+		$buttons = array(
+			'addcat'=> $this->getAddCategoryButton(),
+			'shortcut' => $this->getShortcutButton(),
+		);
+
+		return $buttons;
+	}
+
+	/**
+	 * Gets the button to add a new category.
+	 *
+	 * @return	string		HTML representiation of the add category button
+	 */
+	protected function getAddCategoryButton($table='tx_dam_cat') {
+		global $BE_USER,$LANG,$BACK_PATH,$TCA,$TYPO3_CONF_VARS;
+
+		$cmd = t3lib_div::_GPmerged('SLCMD');
+
+		if (is_array($cmd['SELECT']['txdamCat'])) {
+			$uid = intval(key($cmd['SELECT']['txdamCat']));
+ 		}
+		
+		$sysfolder = t3lib_div::makeInstance('tx_dam_sysfolder');
+		$sysfolderUid = $sysfolder->getPidList();
+		
+		$result = '<a href="' . $BACK_PATH . t3lib_extMgm::extRelPath('dam_catedit') . 'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&returnUrl=' . rawurlencode(t3lib_div::getIndpEnv('REQUEST_URI')) . '&vC=' . $GLOBALS['BE_USER']->veriCode() . '&edit[' . $table . '][-' . $uid . ']=new&defVals[' . $table . '][parent_id]=' . $uid . '&defVals[' . $table . '][pid]='. $this->backRef->id. '">';
+ 
+		if (t3lib_div::int_from_ver(TYPO3_version) < 4004000) {
+			$result .= '<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/new_el.gif','width="11" height="12"') . ' alt="" />';
+		} else {
+			$result .= t3lib_iconWorks::getSpriteIcon('actions-document-new', array('title' => $LANG->sL('LLL:EXT:lang/locallang_core.xml:cm.createnew',1)));
 		}
 
-		$this->content.= $content;
+		$result .= '</a>';
+		return $result;
+ 	}
+	
+	
+	/**
+	 * Gets the button to set a new shortcut in the backend (if current user is allowed to).
+	 *
+	 * @return	string		HTML representiation of the shortcut button
+	 */
+	protected function getShortcutButton() {
+		$result = '';
+		if ($GLOBALS['BE_USER']->mayMakeShortcut()) {
+			$result = $this->doc->makeShortcutIcon('', 'function', $this->MCONF['name']);
+		}
+
+		return $result;
 	}
+	
+	
 }
-
-
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/dam_catedit/mod1/index.php'])	{
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/dam_catedit/mod1/index.php']);

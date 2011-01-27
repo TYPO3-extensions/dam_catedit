@@ -572,13 +572,13 @@ $LOISmode=false;
 				if ($permsEdit && $hiddenField && $TCA[$table]['columns'][$hiddenField] && in_array('unHideRec',$shEl) && (!$TCA[$table]['columns'][$hiddenField]['exclude'] || $GLOBALS['BE_USER']->check('non_exclude_fields',$table.':'.$hiddenField)))	{
 					if ($row[$hiddenField])	{
 						$params='&data['.$table.']['.$row['uid'].']['.$hiddenField.']=0';
-						$cells[]='<a href="#" onclick="'.htmlspecialchars('return jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');').'">'.
-								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/button_unhide.gif','width="11" height="10"').' title="'.$LANG->getLL('unHide'.($table=='pages'?'Page':''),1).'" alt="" />'.
+						$cells[]='<a title="'.$LANG->getLL('unHide'.($table=='pages'?'Page':''),1).'" href="#" onclick="'.htmlspecialchars('return jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');').'">'.
+								t3lib_iconWorks::getSpriteIcon('actions-edit-unhide') .
 								'</a>';
 					} else {
 						$params='&data['.$table.']['.$row['uid'].']['.$hiddenField.']=1';
-						$cells[]='<a href="#" onclick="'.htmlspecialchars('return jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');').'">'.
-								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/button_hide.gif','width="11" height="10"').' title="'.$LANG->getLL('hide'.($table=='pages'?'Page':''),1).'" alt="" />'.
+						$cells[]='<a title="'.$LANG->getLL('hide'.($table=='pages'?'Page':''),1).'" href="#" onclick="'.htmlspecialchars('return jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');').'">'.
+								t3lib_iconWorks::getSpriteIcon('actions-edit-hide') .
 								'</a>';
 					}
 				}
@@ -591,20 +591,21 @@ $LOISmode=false;
 //					$cells[]='<a href="#" onclick="if (confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$title)).')) {jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');} return false;"><img src="'.$this->backPath.'gfx/delete_record.gif" width="12" height="12" border="0" align="top" title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" /></a>';
 //				}
 
-$quickDelete = true;
+					// ToDo: weird: quickDelete = true means that there is a confirmation message
+					// Todo: quickDelete=true is hardcoded
+				$quickDelete = true;
 
-					// "Delete" link:
+					// "Delete" with confirmation (default)
 				if ($quickDelete AND  ( ($table=='pages' && ($localCalcPerms&4)) || ($table!='pages' && ($this->calcPerms&16)) && in_array('delRec',$shEl) ) )	{
 					$params = '&cmd[tx_dam_cat]['.$row['uid'].'][delete]=1';
 					$title = $row['title'].' ('.$row['file_name'].')';
 					$onClick = 'if (confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:mess.delete'),$title)).')) {jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');} return false;';
-					$cells[] = '<a href="#" onclick="'.$onClick.'">'.
- 								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/delete_record.gif', 'width="12" height="12"').' title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" alt="" />'.
+					$cells[] = '<a title="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:cm.delete',1).'" href="#" onclick="'.$onClick.'">'.
+								t3lib_iconWorks::getSpriteIcon('actions-edit-delete') .
 								'</a>';
 				}
 
-
-					// delete
+					// Todo: Quick delete. Works but without redirect back to the overview.
 				if (!$quickDelete AND ( ($table=='pages' && ($localCalcPerms&4)) || ($table!='pages' && ($this->calcPerms&16)) && in_array('delRec',$shEl) ) )	{
 					$cmd = 'tx_dam_cmd_filedelete';
 					$script = $BACK_PATH.PATH_txdam_rel.'mod_cmd/index.php?CMD='.$cmd.'&vC='.$GLOBALS['BE_USER']->veriCode().'&id='.rawurlencode($row['uid']).'&returnUrl='.t3lib_div::getIndpEnv('TYPO3_REQUEST_URL');

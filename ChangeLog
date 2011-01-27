@@ -1,3 +1,7 @@
+2011-01-27  Lorenz Ulrich <lorenz.ulrich@visol.ch>
+
+    * Fix/Feature #16299: Visual and functional improvement of dam_catedit
+
 2011-01-19  Lorenz Ulrich <lorenz.ulrich@visol.ch>
 
     * Fix #6014: dam_catedit: Normal BE-User unable to add/sort Toplevel Categories (Thanks to Stanislas Rolland)

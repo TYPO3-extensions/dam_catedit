@@ -152,11 +152,12 @@ class tx_damcatedit_cm {
 	 */	
 	function DAMcatDelete($table, $uid, $elInfo) {
 		$editOnClick = '';
-		$loc = 'top.content.nav_frame';
+		$loc = 'top.nav';
+		$frameLocation = $loc . '.iframe';
 		$editOnClick = 'if('.$loc.' && confirm('.$GLOBALS['LANG']->JScharCode(sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:mess.delete'),$elInfo[0])).
-			')){'.$loc.'.document.location=top.TS.PATH_typo3+\'tce_db.php?redirect=\'+top.rawurlencode('.
-			$this->backRef->frameLocation($loc.'.document').')+\''.
-			'&cmd['.$table.']['.$uid.'][delete]=1&prErr=1&vC='.$GLOBALS['BE_USER']->veriCode().'\';hideCM();}';
+			')){this.location=' . $loc . '.setUrl(\'tce_db.php?' .
+			'redirect=\'+top.rawurlencode(' . $this->backRef->frameLocation($frameLocation) . ')+\'' .
+			'&cmd[' . $table . '][' . $uid . '][delete]=1&prErr=1&vC=' . $GLOBALS['BE_USER']->veriCode() . t3lib_BEfunc::getUrlToken('tceAction') .'\');};';
 
 		return $this->backRef->linkItem(
 			$this->backRef->label('delete'),
