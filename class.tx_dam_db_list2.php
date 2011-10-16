@@ -784,8 +784,8 @@ $LOISmode=false;
 
 			// Compile the options into a multiple selector box:
 		$lMenu = '
-										<select size="'.t3lib_div::intInRange(count($fields)+1,3,8).'" multiple="multiple" name="displayFields['.$table.'][]">'.implode('',$opt).'
-										</select>
+				<select size="' . tx_dam::forceIntegerInRange((count($fields))+1, 3, 8) . '" multiple="multiple" name="displayFields[' . $table . '][]">' . implode('', $opt) . '
+				</select>
 				';
 
 			// Table with the search box:

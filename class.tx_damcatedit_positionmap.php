@@ -549,7 +549,7 @@ class tx_damcatedit_positionMap {
 	function printRecordMap($lines,$colPosArray)	{
 		$row1='';
 		$row2='';
-		$count = t3lib_div::intInRange(count($colPosArray),1);
+		$count = tx_dam::forceIntegerInRange(count($colPosArray),1);
 
 			// Traverse the columns here:
 		foreach($colPosArray as $kk => $vv)	{

@@ -377,13 +377,13 @@ class tx_damcatedit_db {
 	 * $rdepth is an integer >=0 telling how deep to dig for uids under each entry in $uid_list
 	 */
 	function getSubRecordsIdList($uid_list,$depth=1,$beginLevel=0,$where=' ')	{
-		$depth = t3lib_div::intInRange($depth,0);
+		$depth = tx_dam::forceIntegerInRange($depth,0);
 
 		$uid_list_arr = array_unique(t3lib_div::trimExplode(',',$uid_list,1));
 		$uid_list='';
 		reset($uid_list_arr);
 		while(list(,$val)=each($uid_list_arr))	{
-			$val = t3lib_div::intInRange($val,0);
+			$val = tx_dam::forceIntegerInRange($val,0);
 			if ($val)	$uid_list.=$val.','.$this->getTreeList($val,$depth,$beginLevel,$where);
 		}
 		return preg_replace('/,$/','',$uid_list);

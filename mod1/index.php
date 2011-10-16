@@ -47,7 +47,6 @@ require_once(PATH_txdam.'lib/class.tx_dam_scbase.php');
 
 $LANG->includeLLFile('EXT:lang/locallang_mod_web_list.xml');
 
-#require_once(t3lib_extmgm::extPath('dam_catedit').'class.tx_dam_db_list.php');
 require_once(t3lib_extmgm::extPath('dam_catedit').'class.tx_dam_db_list2.php');
 require_once(PATH_txdam.'lib/class.tx_dam_sysfolder.php');
 require_once(t3lib_extmgm::extPath('dam_catedit').'lib/class.tx_damcatedit_db.php');
@@ -85,14 +84,8 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			$this->doc->form='<form action="" method="post">';
 			$this->doc->styleSheetFile2 = t3lib_extMgm::extRelPath('dam') . 'res/css/stylesheet.css';
 
-			if (t3lib_div::compat_version('4.2.0')) {  
-				$this->doc->getContextMenuCode();
-			} else {
-				$CMparts = $this->doc->getContextMenuCode();
-				$this->doc->bodyTagAdditions = $CMparts[1];
-				$this->doc->JScode .= $CMparts[0];
-				$this->doc->postCode .= $CMparts[2];
-			}
+			$this->doc->getContextMenuCode();
+
 			
 				// Add JavaScript functions to the page:
 			$this->doc->JScode=$this->doc->wrapScriptTags('
@@ -337,11 +330,7 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 		
 		$result = '<a href="' . $BACK_PATH . t3lib_extMgm::extRelPath('dam_catedit') . 'mod_cmd/index.php?CMD=tx_damcatedit_cmd_new&returnUrl=' . rawurlencode(t3lib_div::getIndpEnv('REQUEST_URI')) . '&vC=' . $GLOBALS['BE_USER']->veriCode() . '&edit[' . $table . '][-' . $uid . ']=new&defVals[' . $table . '][parent_id]=' . $uid . '&defVals[' . $table . '][pid]='. $this->backRef->id. '">';
  
-		if (t3lib_div::int_from_ver(TYPO3_version) < 4004000) {
-			$result .= '<img' . t3lib_iconWorks::skinImg($BACK_PATH,'gfx/new_el.gif','width="11" height="12"') . ' alt="" />';
-		} else {
-			$result .= t3lib_iconWorks::getSpriteIcon('actions-document-new', array('title' => $LANG->sL('LLL:EXT:lang/locallang_core.xml:cm.createnew',1)));
-		}
+		$result .= t3lib_iconWorks::getSpriteIcon('actions-document-new', array('title' => $LANG->sL('LLL:EXT:lang/locallang_core.xml:cm.createnew',1)));
 
 		$result .= '</a>';
 		return $result;
