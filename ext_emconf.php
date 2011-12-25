@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'Module for editing the DAM categories.',
 	'category' => 'module',
 	'shy' => 0,
-	'version' => '1.2.2-dev',
+	'version' => '1.2.3-dev',
 	'dependencies' => 'dam',
 	'conflicts' => '',
 	'priority' => '',
@@ -35,7 +35,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'dam' => '1.3.0-',
+			'dam' => '1.2.4-',
 			'php' => '4.0.0-',
 			'typo3' => '4.5.0-',
 		),
