@@ -306,12 +306,7 @@ $l10nEnabled = false;
 			$cc=0;
 			$itemContentTRows.= $this->fwd_rwd_nav('rwd');
 			foreach($accRows as $row)	{
-$this->alternateBgColors = false;
 				$cc++;
-				$row_bgColor=
-					$this->alternateBgColors ?
-					(($cc%2)?' class="item"' :' class="item" bgColor="'.t3lib_div::modifyHTMLColor($GLOBALS['SOBE']->doc->bgColor4,+10,+10,+10).'"') :
-					' class="item"';
 
 					// Initialization
 				$iconfile = t3lib_iconWorks::getIcon($table,$row);
@@ -340,10 +335,9 @@ $this->alternateBgColors = false;
 						$theData[$fCol]=t3lib_BEfunc::getProcessedValueExtra($table,$fCol,$row[$fCol],100);
 					}
 				}
-$actionIcon='';
-				$itemContentTRows.=$this->addElement($theIcon, $theData, $actionIcon, $row_bgColor, '', true);
+				$itemContentTRows .= $this->addElement($theIcon, $theData, '', 'class="typo3-dblist-item"', '', 'class="db_list_normal"');
 
-					// Thumbsnails?
+					// Thumbnails?
 //				if ($this->thumbs && trim($row[$thumbsCol]))	{
 //					$itemContentTRows.=$this->addelement('', Array($titleCol=>$this->thumbCode($row,$table,$thumbsCol)), '', $row_bgColor);
 //				}
@@ -385,23 +379,19 @@ $actionIcon='';
 					$theData[$fCol].=$this->addSortLink($GLOBALS['LANG']->sL(t3lib_BEfunc::getItemLabel($table,$fCol,'&nbsp;<i>[|]</i>&nbsp;')),$fCol,$table);;
 				}
 			}
-			$out.=$this->addelement($theUpIcon, $theData, '', ' class="c-headLine"', 'border-bottom:1px solid #888');
+			$out .= $this->addelement($theUpIcon, $theData, '', ' class="c-headLine"', 'border-bottom:1px solid #888', 'class="t3-row-header"');
 
 
 				// The list of records is added after the header:
 			$out.=$itemContentTRows;
 
-			$out.=$this->addelement('', array(), '', '', 'border-top:1px solid #888');
-
-#TODO
-$LOISmode=false;
 				// ... and it is all wrapped in a table:
 			$out='
 
 			<!--
 				DB listing of elements:	"'.htmlspecialchars($table).'"
 			-->
-				<table border="0" cellpadding="0" cellspacing="0" class="typo3-dblist'.($LOISmode?' typo3-dblist-overview':'').'">
+				<table class="typo3-dblist typo3-filelist" style="border-spacing: 0">
 					'.$out.'
 				</table>';
 		}
@@ -517,20 +507,21 @@ $LOISmode=false;
 						'</a>';
 				}
 
-					// Versioning:
-				if (t3lib_extMgm::isLoaded('version'))	{
+					// Versioning interface is only displayed if EXT:version is loaded but EXT:workspaces it not loaded
+					// this is the same behaviour as in the core
+				if (t3lib_extMgm::isLoaded('version') && !t3lib_extMgm::isLoaded('workspaces'))	{
 					$vers = t3lib_BEfunc::selectVersionsOfRecord($table, $row['uid'], $fields='uid');
 					if (is_array($vers))	{	// If table can be versionized.
 						if (count($vers)>1)	{
-							$st = 'background-color: #FFFF00; font-weight: bold;';
-							$lab = count($vers)-1;
+							$versionCount = count($vers)-1;
+								// there are only 50 version icons available
+							$icon = ($versionCount <= 50) ? 'status-version-' . $versionCount : 'status-version-no-version';
 						} else {
-							$st = 'background-color: #9999cc; font-weight: bold;';
-							$lab = 'V';
+							$icon = 'status-version-no-version';
 						}
 
-						$cells[]='<a href="'.htmlspecialchars($this->backPath.t3lib_extMgm::extRelPath('version')).'cm1/index.php?table='.rawurlencode($table).'&uid='.rawurlencode($row['uid']).'" class="typo3-ctrl-versioning" style="'.htmlspecialchars($st).'">'.
-								$lab.
+						$cells[]='<a href="'.htmlspecialchars($this->backPath.t3lib_extMgm::extRelPath('version')).'cm1/index.php?table='.rawurlencode($table).'&uid='.rawurlencode($row['uid']).'">' .
+								t3lib_iconWorks::getSpriteIcon($icon) .
 								'</a>';
 					}
 				}
@@ -642,15 +633,14 @@ $LOISmode=false;
 	 * @param	string		$tdAttr is insert in the <td>-tags. Must carry a ' ' as first character
 	 * @return	string		HTML content for the table row
 	 */
-	function addElement($icon, $data, $action='', $tdAttr='', $tdStyle='', $trHover=false)	{
+	function addElement($icon, $data, $action='', $tdAttr='', $tdStyle='', $trAttr='')	{
 
 		$noWrap = ($this->no_noWrap) ? '' : ' nowrap="nowrap"';
 
-		$trHover = $trHover ? (' onmouseover="this.style.backgroundColor = \''.$GLOBALS['SOBE']->doc->hoverColorTR.'\';" onmouseout="this.style.backgroundColor = \'\'"') : '';
 			// Start up:
 		$out='
 		<!-- Element, begin: -->
-		<tr'.$trHover.'>';
+		<tr ' . $trAttr . '>';
 
 
 			// Show icon and lines
@@ -732,7 +722,10 @@ $LOISmode=false;
 		} elseif($this->pointer->page) {
 			$theData[$titleCol] = $this->fwd_rwd_HTML('rwd');
 		}
-		$code=$this->addElement('',$theData);
+		if (!empty($theData)) {
+			$code = $this->addElement('', $theData, '', '', '', ' class="c-headLine"');
+		}
+		
 		return $code;
 	}
 
@@ -794,47 +787,14 @@ $LOISmode=false;
 				<!--
 					Field selector for extended table view:
 				-->
-				<table border="0" cellpadding="0" cellspacing="0" class="bgColor4" id="typo3-dblist-fieldSelect">
+				<table border="0" cellpadding="0" cellspacing="0" style="margin-top: 6px;" id="typo3-dblist-fieldSelect">
 					<tr>
 						<td>'.$lMenu.'</td>
-						<td><input type="Submit" name="search" value="&gt;&gt;"></td>
+						<td><input type="Submit" style="margin-left: 6px;" name="search" value="&gt;&gt;"></td>
 					</tr>
 					</table>
 			'.$formElements[1].'
 		';
-		return $content;
-	}
-
-
-	/**
-	 * Creates the search box
-	 *
-	 * @param	boolean		If true, the search box is wrapped in its own form-tags
-	 * @return	string		HTML for the search box
-	 */
-	function getSearchBox($formFields=1)	{
-
-			// Setting form-elements, if applicable:
-		$formElements=array('','');
-		if ($formFields)	{
-			$formElements=array('<form action="'.htmlspecialchars($this->listURL()).'" method="post">','</form>');
-		}
-
-#TODO unused??
-
-			// Table with the search box:
-		$content.= $formElements[0].'
-				<!--
-					Search box:
-				-->
-				<table border="0" cellpadding="0" cellspacing="0" class="bgColor4" id="typo3-dblist-search">
-					<tr>
-						<td>'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:labels.enterSearchString',1).'<input type="text" name="search_field" value="'.htmlspecialchars($this->searchString).'"'.$GLOBALS['TBE_TEMPLATE']->formWidth(10).' /></td>
-						<td><input type="submit" name="search" value="'.$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:labels.search',1).'" /></td>
-					</tr>
-					</table>
-				'.$formElements[1];
-
 		return $content;
 	}
 
@@ -856,14 +816,14 @@ $LOISmode=false;
 				$pointer=max(0,$this->pointer->page+1);
 				$href = $this->listURL().'&SET[tx_dam_resultPointer]='.$pointer.$tParam;
 				$content = '&nbsp;<a href="'.htmlspecialchars($href).'">'.
-						'<img src="'.$this->backPath.'gfx/pildown.gif" width="14" height="14" valign="top" border="0" alt="" />'.
+						t3lib_iconWorks::getSpriteIcon('actions-move-down') .
 						'</a> <i>['.($this->pointer->lastItemNum+1).' - '.min($this->pointer->lastItemNum+1+$this->pointer->itemsPerPage,$this->pointer->countTotal).']</i>';
 			break;
 			case 'rwd':
 				$pointer=max(0,$this->pointer->page-1);
 				$href = $this->listURL().'&SET[tx_dam_resultPointer]='.$pointer.$tParam;
 				$content = '&nbsp;<a href="'.htmlspecialchars($href).'">'.
-						'<img src="'.$this->backPath.'gfx/pilup.gif" width="14" height="14" valign="top" border="0" alt="" />'.
+						t3lib_iconWorks::getSpriteIcon('actions-move-up') .
 						'</a> <i>['.max(1,$this->pointer->firstItemNum-$this->pointer->itemsPerPage).' - '.($this->pointer->firstItemNum-1).']</i>';
 			break;
 		}
