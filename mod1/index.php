@@ -81,7 +81,6 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			$this->doc = t3lib_div::makeInstance('template');
 			$this->doc->backPath = $BACK_PATH;
 			$this->doc->setModuleTemplate(t3lib_extMgm::extRelPath('dam_catedit') . 'mod1/mod_template.html');
-			$this->doc->form='<form action="" method="post">';
 			$this->doc->styleSheetFile2 = t3lib_extMgm::extRelPath('dam') . 'res/css/stylesheet.css';
 
 			$this->doc->getContextMenuCode();
@@ -273,9 +272,8 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 
 			$dblist->generateList();
 
-			$this->moduleContent.= '<form action="'.$dblist->listURL().'" method="post" name="dblistForm">';
 			$this->moduleContent.= $dblist->HTMLcode;
-			$this->moduleContent.= '<input type="hidden" name="cmd_table" /><input type="hidden" name="cmd" /></form>';
+			$this->moduleContent.= '<input type="hidden" name="cmd_table" /><input type="hidden" name="cmd" />';
 			$this->moduleContent.= $dblist->fieldSelectBox();
 		}
 		
