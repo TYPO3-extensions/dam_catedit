@@ -244,14 +244,12 @@ class tx_damcatedit_navframe {
 	 */
 	protected function getRefreshButton() {
 		global $LANG,$BACK_PATH,$TYPO3_CONF_VARS;
-	
-		$result = '';
 
 		$result .= '
-				<a href="'.htmlspecialchars(t3lib_div::linkThisScript(array('unique' => uniqid('tx_dam_catedit_navframe')))).'">'.
-				'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/refresh_n.gif','width="14" height="14"').' title="'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'" alt="" /></a>
-				';
-		
+				<a href="'.htmlspecialchars(t3lib_div::linkThisScript(array('unique' => uniqid('tx_dam_catedit_navframe')))).'" title="'.$LANG->sL('LLL:EXT:lang/locallang_core.xml:labels.refresh',1).'">' .
+					t3lib_iconWorks::getSpriteIcon('actions-system-refresh') . '
+				</a>';
+
 		return $result;
 	}
 

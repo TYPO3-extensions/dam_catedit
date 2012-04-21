@@ -94,7 +94,7 @@ class tx_damcatedit_cm {
 	function DAMcatInfo($table, $uid) {
 			return $this->backRef->linkItem(
 			$this->backRef->label('info'),
-			$this->backRef->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->backRef->PH_backPath,'gfx/zoom2.gif','width="12" height="12"').' alt="" />'),
+			$this->backRef->excludeIcon(t3lib_iconWorks::getSpriteIcon('actions-document-info')),
 			"top.launchView('".$table."', '".$uid."'); return hideCM();"
 		);
 	}
@@ -111,7 +111,7 @@ class tx_damcatedit_cm {
 		$url = 'alt_doc.php?edit['.$table.']['.$uid.']=edit';
 		return $this->backRef->linkItem(
 			$this->backRef->label('edit'),
-			$this->backRef->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->backRef->PH_backPath,'gfx/edit2.gif','width="12" height="12"').' alt="" />'),
+			$this->backRef->excludeIcon(t3lib_iconWorks::getSpriteIcon('actions-document-open')),
 			$this->backRef->urlRefForCM($url,'returnUrl'),
 			1
 		);
@@ -137,7 +137,7 @@ class tx_damcatedit_cm {
 		}
 		return $this->backRef->linkItem(
 			$GLOBALS['LANG']->makeEntities($GLOBALS['LANG']->sL('LLL:EXT:dam_catedit/locallang_cm.php:tx_damcatedit_cm1.newSubCat',1)),
-			$this->backRef->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->backRef->PH_backPath,'gfx/new_el.gif','width="11" height="12"').' alt="" />'),
+			$this->backRef->excludeIcon(t3lib_iconWorks::getSpriteIcon('actions-document-new')),
 			$editOnClick.'return hideCM();'
 		);
 	}
@@ -161,7 +161,7 @@ class tx_damcatedit_cm {
 
 		return $this->backRef->linkItem(
 			$this->backRef->label('delete'),
-			$this->backRef->excludeIcon('<img'.t3lib_iconWorks::skinImg($this->backRef->PH_backPath,'gfx/garbage.gif','width="11" height="12"').' alt="" />'),
+			$this->backRef->excludeIcon(t3lib_iconWorks::getSpriteIcon('actions-edit-delete')),
 			$editOnClick.'return false;'
 		);
 	}
