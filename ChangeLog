@@ -1,3 +1,23 @@
+2012-05-15 Lorenz Ulrich <lorenz.ulrich@visol.ch>
+
+    * [BUGFIX] #M17585 Refresh category tree after moving or deleting a category
+
+2011-12-26 Lorenz Ulrich <lorenz.ulrich@visol.ch>
+
+    * [TASK] #M18541 Adjust dam_catedit to the look of TYPO3 4.5+
+
+2012-04-21 Ingo Renner <ingo@typo3.org>
+
+    * [TASK] Update icons to fit t3skin
+
+2011-12-26 Lorenz Ulrich <lorenz.ulrich@visol.ch>
+
+    * [BUGFIX] #M18355 Category list not displayed in Internet Explorer
+
+2011-10-17 Lorenz Ulrich <lorenz.ulrich@visol.ch>
+
+    * [TASK] #M18297 dam_catedit: Remove old and deprecated code
+
 2011-01-26  Dan Osipov <dosipov@phillyburbs.com>
 
 	* Update ext_emconf.php following release of 1.2.0
