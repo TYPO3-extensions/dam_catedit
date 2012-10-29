@@ -725,7 +725,7 @@ $l10nEnabled = false;
 		if (!empty($theData)) {
 			$code = $this->addElement('', $theData, '', '', '', ' class="c-headLine"');
 		}
-		
+
 		return $code;
 	}
 
@@ -824,7 +824,7 @@ $l10nEnabled = false;
 				$href = $this->listURL().'&SET[tx_dam_resultPointer]='.$pointer.$tParam;
 				$content = '&nbsp;<a href="'.htmlspecialchars($href).'">'.
 						t3lib_iconWorks::getSpriteIcon('actions-move-up') .
-						'</a> <i>['.max(1,$this->pointer->firstItemNum-$this->pointer->itemsPerPage).' - '.($this->pointer->firstItemNum-1).']</i>';
+						'</a> <i>['.max(1,$this->pointer->firstItemNum-$this->pointer->itemsPerPage).' - '.($this->pointer->firstItemNum).']</i>';
 			break;
 		}
 		return $content;

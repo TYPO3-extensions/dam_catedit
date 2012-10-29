@@ -212,12 +212,13 @@ class tx_damcatedit_db {
 	 * @param	string		Commalist of fields to select
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
 	 * @param 	boolean 	Enable sorting
+	 * @param	string		SQL LIMIT clause
 	 * @return	array		Returns the rows if found, otherwise empty array
 	 */
-	function getRecords ($uids, $fields='', $where='', $sorting=true)	{
+	function getRecords ($uids, $fields = '', $where = '', $sorting = TRUE, $limit = '')	{
 		$fields = $fields?$fields:$this->fieldList;
 
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, $this->table.'.uid IN ('.$uids.')'.$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''));
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, $this->table.'.uid IN ('.$uids.')'.$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''), $limit);
 		if(!$res) echo $GLOBALS['TYPO3_DB']->sql_error();
 
 		if($this->resReturn) return $res;
@@ -282,12 +283,13 @@ class tx_damcatedit_db {
 	 * @param	string		List of fields to select (default is '*')
 	 * @param	string		Additional WHERE clause, eg. " AND blablabla=0"
 	 * @param 	boolean 	Enable sorting
+	 * @param	string		SQL LIMIT clause
 	 * @return	array		Returns the rows if found, otherwise empty array
 	 */
-	function getSubRecords ($uid, $fields='', $where='', $sorting=true)	{
+	function getSubRecords ($uid, $fields = '', $where = '', $sorting = TRUE, $limit = '')	{
 		$fields = $fields?$fields:$this->fieldList;
 
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, $this->parentField.'='.intval($uid).$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''));
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($fields, $this->table, $this->parentField.'='.intval($uid).$where.$this->where_default.$this->pidListWhere, '', ($sorting?$this->sorting:''), $limit);
 		if(!$res) echo $GLOBALS['TYPO3_DB']->sql_error();
 
 		if($this->resReturn) return $res;

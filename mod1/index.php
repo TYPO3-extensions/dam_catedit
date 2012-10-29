@@ -258,11 +258,16 @@ class tx_damcatedit_module1 extends tx_dam_SCbase {
 			$treedb->setResReturn(true);
 			$treedb->setSortFields($orderBy);
 
+			$limit = $this->selection->pointer->itemsPerPage;
+			$begin = $this->selection->pointer->firstItemNum;
+			if ($limit) {
+				$limitSql = (intval($begin) ? $begin . ',' : '') . $limit;
+			}
 			if (isset($uid) OR $GLOBALS['BE_USER']->isAdmin()) {
-				$dblist->res = $treedb->getSubRecords($uid, 'tx_dam_cat.*');
+				$dblist->res = $treedb->getSubRecords($uid, 'tx_dam_cat.*', '', TRUE, $limitSql);
 			} else {
 				$uids = implode(',',$mounts);
-				$dblist->res = $treedb->getRecords ($uids, 'tx_dam_cat.*');
+				$dblist->res = $treedb->getRecords ($uids, 'tx_dam_cat.*', '', TRUE, $limitSql);
 			}
 
 
