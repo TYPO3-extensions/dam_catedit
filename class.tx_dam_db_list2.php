@@ -542,16 +542,16 @@ $l10nEnabled = false;
 				if ($permsEdit && $TCA[$table]['ctrl']['sortby']  && !$this->sortField  && in_array('sortRec',$shEl))	{	//
 					if (isset($this->currentTable['prev'][$row['uid']]))	{	// Up
 						$params='&cmd['.$table.']['.$row['uid'].'][move]='.$this->currentTable['prev'][$row['uid']];
-						$cells[]='<a href="#" onclick="'.htmlspecialchars('return jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');').'">'.
-								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/button_up.gif','width="11" height="10"').' title="'.$LANG->getLL('moveUp',1).'" alt="" />'.
+						$cells[] = '<a href="#" onclick="' . htmlspecialchars('return jumpToUrl(\'' . $GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');') . '" title="'.$LANG->getLL('moveUp', 1) . '">' .
+								t3lib_iconWorks::getSpriteIcon('actions-move-up') .
 								'</a>';
 					} else {
 						$cells[]='<img src="clear.gif" '.t3lib_iconWorks::skinImg($this->backPath,'gfx/button_up.gif','width="11" height="10"',2).' alt="" />';
 					}
 					if ($this->currentTable['next'][$row['uid']])	{	// Down
 						$params='&cmd['.$table.']['.$row['uid'].'][move]='.$this->currentTable['next'][$row['uid']];
-						$cells[]='<a href="#" onclick="'.htmlspecialchars('return jumpToUrl(\''.$GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');').'">'.
-								'<img'.t3lib_iconWorks::skinImg($this->backPath,'gfx/button_down.gif','width="11" height="10"').' title="'.$LANG->getLL('moveDown',1).'" alt="" />'.
+						$cells[] = '<a href="#" onclick="' . htmlspecialchars('return jumpToUrl(\'' . $GLOBALS['SOBE']->doc->issueCommand($params,-1).'\');') . '" title="' . $LANG->getLL('moveDown', 1) . '">' .
+								t3lib_iconWorks::getSpriteIcon('actions-move-down') .
 								'</a>';
 					} else {
 						$cells[]='<img src="clear.gif" '.t3lib_iconWorks::skinImg($this->backPath,'gfx/button_down.gif','width="11" height="10"',2).' alt="" />';
